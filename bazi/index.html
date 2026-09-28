@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
+<title>有朋迅 · 八字排盘与流月观察（公开测试版）</title>
+<meta name="description" content="八字排盘、个人流年流月、双人对照、学习与本机案例记录。公开测试版，提供传统文化规则解释及情境建议。" />
+<link rel="stylesheet" href="fonts.css" /><!-- 本地自托管字体（去 Google Fonts 依赖，国内可达） -->
+<link rel="stylesheet" href="mystic.css" />
+<link rel="stylesheet" href="mystic-sections.css" />
+<link rel="stylesheet" href="ziwei.css" />
+<link rel="stylesheet" href="polish.css" />
+<link rel="stylesheet" href="ypx-redesign.css" /><!-- 视觉重构（深空极光 / 章节水印 / 核心舞台 / 流光） -->
+<link rel="stylesheet" href="ypx-design-system.css?v=1" /><!-- 设计系统组件精修（排版/阴影/按钮/徽章/排盘数据表） 依据 DESIGN.md -->
+<link rel="stylesheet" href="ypx-knowledge.css?v=1" /><!-- 知识库阅读器（学习课堂交互 + 玻璃态弹窗） -->
+<link rel="stylesheet" href="fortune-unified.css" /><!-- 赛博神算子 · 单输入驱动双命盘（统一入口层） -->
+<link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%23d8c5ff'/><stop offset='1' stop-color='%237c5adc'/></linearGradient></defs><circle cx='32' cy='32' r='30' fill='url(%23g)'/><text x='32' y='43' font-size='32' text-anchor='middle' fill='%230d0620' font-family='serif' font-weight='bold'>迅</text></svg>" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="有朋迅 · 八字排盘与流月观察（公开测试版）" />
+<meta property="og:description" content="八字排盘、个人流年流月、双人对照、学习与本机案例记录。公开测试版，提供传统文化规则解释及情境建议。" />
+
+<meta name="theme-color" content="#f4efe4" />
+<meta name="robots" content="index,follow" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="有朋迅 · 八字排盘与流月观察（公开测试版）" />
+<meta name="twitter:description" content="八字排盘、个人流年流月、双人对照、学习与本机案例记录。公开测试版，提供传统文化规则解释及情境建议。" />
+
+<!-- 上线后把 youpengxun.github.io/citizen/bazi/ 换成你的真实域名 -->
+<link rel="canonical" href="https://youpengxun.github.io/citizen/bazi/" />
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      "name": "有朋迅 · AI 命理分析",
+      "url": "https://youpengxun.github.io/citizen/bazi/",
+      "applicationCategory": "LifestyleApplication",
+      "operatingSystem": "Web",
+      "inLanguage": "zh-CN",
+      "description": "八字与紫微斗数，本命与运限，逐项说明盘面与依据。",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "CNY" }
+    },
+    {
+      "@type": "Organization",
+      "name": "有朋迅 YOUPENGXUN",
+      "url": "https://youpengxun.github.io/citizen/bazi/",
+      "description": "把传统术数与 AI 放进同一个框架——看清结构，而不是替你决定人生。"
+    }
+  ]
+}
+</script>
+<style id="ypx-tweak-defaults">:root{--particle-density:2;--glow-strength:2;}</style>
+<style id="ypx-viz">
+/* ===== 新增：章节导航轨 + 重心分层（主色 --hue:262 不变） ===== */
+.side-rail{
+  position:fixed; right:20px; top:50%; transform:translateY(-50%);
+  z-index:90; display:flex; flex-direction:column; align-items:center;
+  padding:14px 7px; border-radius:999px;
+  background:hsla(258,42%,7%,.55); border:1px solid var(--line);
+  backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+  box-shadow:0 14px 44px rgba(2,0,12,.55);
+}
+.side-rail .rail-track{ position:relative; display:flex; flex-direction:column; gap:9px; padding:4px 0; }
+.side-rail .rail-track::before{
+  content:""; position:absolute; left:50%; top:6px; bottom:6px; width:1px; transform:translateX(-50%);
+  background:linear-gradient(180deg,transparent,var(--line-strong),transparent);
+}
+.rail-dot{
+  position:relative; width:30px; height:30px; border-radius:50%;
+  display:grid; place-items:center; cursor:pointer; border:none; padding:0;
+  font-family:var(--font-display); font-size:13px; color:var(--ink-3);
+  background:hsla(var(--hue),45%,30%,.35); border:1px solid var(--line);
+  transition:all .35s cubic-bezier(.2,.7,.3,1);
+}
+.rail-dot:hover{ color:var(--ink); border-color:var(--line-strong); }
+.rail-dot.cat-tool{ color:var(--vio-soft); }
+.rail-dot.cat-tool::after{
+  content:""; position:absolute; inset:-3px; border-radius:50%;
+  border:1px solid hsla(var(--hue),85%,70%,.38);
+}
+.rail-dot.active{
+  color:#0d0620; background:linear-gradient(135deg,var(--vio-soft),var(--vio));
+  border-color:var(--vio); box-shadow:0 0 16px hsla(var(--hue),90%,70%,.6); transform:scale(1.14);
+}
+.rail-dot.cat-tool.active{ box-shadow:0 0 24px hsla(var(--hue),92%,72%,.85); }
+.rail-dot .rail-tip{
+  position:absolute; right:calc(100% + 13px); top:50%; transform:translateY(-50%);
+  white-space:nowrap; font-size:12px; letter-spacing:.04em; color:var(--ink);
+  background:hsla(258,45%,7%,.96); border:1px solid var(--line-strong);
+  padding:6px 12px; border-radius:10px; opacity:0; pointer-events:none;
+  transition:opacity .25s; box-shadow:0 8px 24px rgba(2,0,12,.6); font-family:var(--font-body);
+}
+.rail-dot .rail-tip b{ color:var(--vio-soft); font-weight:600; }
+.rail-dot:hover .rail-tip, .rail-dot.active .rail-tip{ opacity:1; }
+
+/* 重心分层：核心功能 / 产品叙事 / 延伸内容 */
+.sec-cat{
+  display:inline-flex; align-items:center; gap:7px; align-self:flex-start;
+  font-family:var(--font-en); font-size:11px; letter-spacing:.18em; text-transform:uppercase;
+  padding:5px 13px; border-radius:999px; margin-bottom:2px;
+  border:1px solid var(--line-strong); color:var(--ink-2);
+  background:hsla(var(--hue),60%,60%,.06);
+}
+.sec-cat::before{ content:""; width:6px; height:6px; border-radius:50%; background:var(--ink-3); }
+.sec-cat.cat-tool{ color:var(--vio-soft); border-color:var(--vio); background:hsla(var(--hue),75%,62%,.12); box-shadow:0 0 16px hsla(var(--hue),88%,68%,.18); }
+.sec-cat.cat-tool::before{ background:var(--vio); box-shadow:0 0 8px hsla(var(--hue),90%,70%,.8); }
+.sec-cat.cat-content{ color:var(--ink-3); }
+.section-head.center .sec-cat{ align-self:center; }
+
+/* 核心功能区：顶部光带 + 极淡径向底光，使其自然成为“画面主” */
+[data-cat="tool"]{ position:relative; }
+[data-cat="tool"]::before{
+  content:""; position:absolute; left:0; right:0; top:0; height:3px; opacity:.7;
+  background:linear-gradient(90deg,transparent,var(--vio),transparent);
+  pointer-events:none;
+}
+[data-cat="tool"] > .wrap{ position:relative; }
+[data-cat="tool"]{
+  background:radial-gradient(120% 78% at 50% 0%, hsla(var(--hue),58%,46%,.10), transparent 58%);
+}
+
+/* 导航当前节高亮 */
+.nav-links > a.active{ color:var(--ink); background:hsla(var(--hue),70%,70%,.10); }
+.nav-links > a.active::after{
+  content:""; position:absolute; left:15px; right:15px; bottom:5px; height:2px;
+  background:linear-gradient(90deg,transparent,var(--vio),transparent); border-radius:2px;
+}
+
+/* Hero 焦点聚光 + 浮卡降噪，让主标题成为“画面主” */
+.hero::after{
+  content:""; position:absolute; left:50%; top:46%; transform:translate(-50%,-50%);
+  width:min(860px,94vw); height:min(580px,72vh); pointer-events:none; z-index:0;
+  background:radial-gradient(50% 50% at 50% 50%, hsla(var(--hue),85%,60%,.20), transparent 70%);
+  filter:blur(8px);
+}
+.hero-core{ z-index:0; }
+.hero-scrim{ z-index:1; }
+.hero-cards{ z-index:1; }
+.hero-inner{ z-index:3; }
+.hero-badge{ position:relative; z-index:3; }
+.fcard{ opacity:.7; }
+
+@media (max-width:1080px){ .side-rail{ display:none; } }
+</style>
+<link rel="stylesheet" href="ypx-light-theme.css" /><!-- 视觉优化层：浅奶白编辑风（Hermès 启发 · 少量紫） -->
+<link rel="stylesheet" href="ypx-motion.css?v=1" /><!-- 交互增强层：鼠标跟随/滚动揭示/拨云见日/五行紫微微光（非破坏，不改配色版式） -->
+<link rel="stylesheet" href="readability.css?v=20260913" />
+<link rel="stylesheet" href="acceptance-fixes.css?v=20260915" /><link rel="stylesheet" href="ziwei-full.css?v=20260921" />
+</head>
+<body><a href="../index.html#portfolio-projects" style="display:block;padding:12px 24px;background:#163c29;color:#fff;text-align:center">← 返回有朋迅作品站</a><aside class="release-notice" role="note">公开测试版 · 排盘与记录在本机完成。当前解读为规则与情境建议，未接入在线 AI；其他术数展示仍属演示。清除浏览器数据会丢失记录，请导出备份。</aside>
+
+<div id="om-splash" aria-hidden="true"><span class="mark">迅</span></div>
+
+<div class="page-bg"></div>
+<canvas id="dust-canvas"></canvas>
+
+<!-- ============ 1. 顶部提示条 ============ -->
+<div class="notice">有朋迅提供 <b>AI 辅助命理与个人分析服务</b>，结果仅作参考，帮助你更清楚地理解问题与选择。</div>
+
+<!-- ============ 2. Header ============ -->
+<nav class="nav" aria-label="主导航">
+  <a class="brand" href="#top" aria-label="有朋迅 首页">
+    <span class="mark">迅</span>
+    <span><b>有朋迅</b><small>YOUPENGXUN</small></span>
+  </a>
+  <div class="nav-links">
+    <a href="#top">首页</a>
+    <a href="#ask">八字排盘</a>
+    <a href="#cases">记录案例</a>
+    
+    <a href="#compare">八字合盘</a>
+    <a href="#learning">学习课堂</a>
+    <div class="nav-auth">
+      <a class="login" href="#member">会员中心</a>
+      <a class="btn btn-primary" href="#ask">开始分析 <span class="arr">→</span></a>
+    </div>
+  </div>
+  <button class="nav-burger" aria-label="菜单">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"></path></svg>
+  </button>
+</nav>
+<div class="mobile-sheet">
+  <a href="#top">首页</a>
+  <a href="#ask">八字排盘</a>
+  <a href="#cases">记录案例</a>
+  
+  <a href="#compare">八字合盘</a>
+  <a href="#learning">学习课堂</a>
+  <a href="#member">会员中心</a>
+  <a href="#ask">开始分析 →</a>
+</div>
+
+<!-- ============ 章节导航轨（重心定位 / 当前节高亮） ============ -->
+<nav class="side-rail" id="sideRail" aria-label="章节导航"></nav>
+
+<span id="top"></span>
+
+<!-- ============ 3. Hero ============ -->
+<header class="hero" data-screen-label="Hero">
+  <canvas id="star-canvas"></canvas>
+  <div class="hero-core" aria-hidden="true">
+    <div class="core-par" data-depth="0.35" style="position:absolute;inset:0;">
+      <svg id="core-svg" viewBox="0 0 1000 1000"></svg>
+      <span class="core-heart"></span>
+    </div>
+  </div>
+  <div class="hero-scrim" aria-hidden="true"></div>
+
+  <div class="hero-cards" aria-hidden="true">
+    <div class="fcard glass fc-1" data-depth="1.3">
+      <span class="k"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 4.7L18.5 9.5 13.8 11 12 16l-1.8-5L5.5 9.5l4.7-1.8z"></path></svg>今日关键词</span>
+      <span class="v">「<em>沉潜</em>」· 适合整理，不适合摊牌</span>
+    </div>
+    <div class="fcard glass fc-2" data-depth="0.8">
+      <span class="k"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 8.6a5.5 5.5 0 0 0-9.3-3.9L12 6.2l.5-1.5a5.5 5.5 0 0 0-9.3 3.9c0 5.5 8.8 10.4 8.8 10.4s8.8-4.9 8.8-10.4z"></path></svg>感情趋势</span>
+      <span class="v">波动收窄，<em>趋于平稳</em></span>
+      <svg class="spark" width="120" height="26" viewBox="0 0 120 26"><polyline points="2,20 22,16 42,21 62,12 82,14 102,8 118,9"></polyline><circle cx="118" cy="9" r="2.4"></circle></svg>
+    </div>
+    <div class="fcard glass fc-3" data-depth="1.1">
+      <span class="k"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"></rect><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>职业提醒</span>
+      <span class="v">适合收尾与交付，<em>不宜开新局</em></span>
+    </div>
+    <div class="fcard glass fc-4" data-depth="1.2">
+      <span class="k"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3.5 2"></path></svg>时间节点</span>
+      <span class="v"><em>06.18</em> · 沟通窗口临近</span>
+    </div>
+    <div class="fcard glass fc-5" data-depth="0.7">
+      <span class="k"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a7 7 0 0 1 4 12.7V17a1 1 0 0 1-1 1h-6a1 1 0 0 1-1-1v-2.3A7 7 0 0 1 12 2z"></path><path d="M9.5 21h5"></path></svg>AI 建议</span>
+      <span class="v">先确认现实条件，<em>再处理情绪</em></span>
+    </div>
+    <div class="fcard glass fc-6" data-depth="0.9">
+      <span class="k"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l5-6 4 4 6-8 3 4"></path></svg>状态指数</span>
+      <span class="v"><em>72</em> · 稳中有压</span>
+    </div>
+  </div>
+
+  <div class="wrap hero-inner">
+    <span class="hero-badge reveal"><span class="pulse"></span>八字 · 流月 · 本机记录</span>
+    <h1 class="h-display reveal" data-d="1">有些问题，不是没有答案，<br />只是还没<span class="glow-text">被看清</span>。</h1>
+    <p class="lead reveal" data-d="2">把八字与紫微命盘读清楚，再回到自己的生活与选择。</p>
+    <div class="hero-actions reveal" data-d="3">
+      <a class="btn btn-primary" href="#ask">开始我的分析 <span class="arr">→</span></a>
+    </div>
+    <div class="hero-stats reveal" data-d="4">
+      <div class="stat"><b>本机</b><span>保存案例</span></div>
+      <div class="stat"><b>双人</b><span>命盘对照</span></div>
+      <div class="stat"><b>按月</b><span>查看流月</span></div>
+    </div>
+  </div>
+  <div class="hero-scroll-hint">SCROLL</div>
+</header>
+
+<!-- ============ 4. 问题认知区 ============ -->
+<section class="section" id="dimensions" data-screen-label="问题认知">
+  <div class="wrap dim-grid">
+    <div class="dim-copy">
+      <span class="chapter" aria-hidden="true">甲</span>
+      <span class="eyebrow reveal">问题，先看结构</span>
+      <h2 class="h-section reveal" data-d="1">你不是需要一句“会变好”。<br />你是想知道，<span class="glow-text">问题到底卡在哪里</span>。</h2>
+      <p class="lead reveal" data-d="2">让人反复焦虑的，往往不是事情本身，而是看不清它的结构。我们把它拆成五层，一层层看。</p>
+    </div>
+    <div class="layers">
+      <div class="layer glass" style="--i:0;"><span class="n">01</span><b>时间</b><span>现在处在哪个阶段，节奏是快是慢</span></div>
+      <div class="layer glass" style="--i:1;"><span class="n">02</span><b>关系</b><span>哪些人和力量在影响这件事</span></div>
+      <div class="layer glass" style="--i:2;"><span class="n">03</span><b>情绪</b><span>判断里有多少是感受，多少是事实</span></div>
+      <div class="layer glass" style="--i:3;"><span class="n">04</span><b>现实条件</b><span>哪些是可以动的，哪些暂时动不了</span></div>
+      <div class="layer glass" style="--i:4;"><span class="n">05</span><b>变化趋势</b><span>接下来一段时间，它更可能往哪走</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 5. 四大能力模块 ============ -->
+<div class="sec-divider" aria-hidden="true"></div>
+<section class="section" id="modules" data-screen-label="能力模块">
+  <div class="wrap">
+    <div class="section-head center">
+      <span class="chapter" aria-hidden="true">乙</span>
+      <span class="eyebrow reveal">四个入口，一套框架</span>
+      <h2 class="h-section reveal" data-d="1">把不同的方式，放进<span class="glow-text">同一个问题</span>里。</h2>
+    </div>
+    <div class="modules-grid">
+      <div class="flip reveal">
+        <div class="flip-inner">
+          <div class="flip-face glass">
+            <span class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="3.5"></circle><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21"></path></svg></span>
+            <h3>双命盘解析</h3>
+            <p>由出生信息生成命盘，当前提供本地规则解释。</p>
+            <span class="more">HOVER ↻</span>
+          </div>
+          <div class="flip-face glass back">
+            <p>八字与紫微的盘面信息会被整理成结构化的描述：性格底色、当前大运、近期流月的侧重点，逐条呈现，不堆术语。</p>
+          </div>
+        </div>
+      </div>
+      <div class="flip reveal" data-d="1">
+        <div class="flip-inner">
+          <div class="flip-face glass">
+            <span class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"></path><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="5.5" r="2.5"></circle></svg></span>
+            <h3>多方式交叉判断</h3>
+            <p>八字与紫微分别展示，不把两个体系的术语混为一谈。</p>
+            <span class="more">HOVER ↻</span>
+          </div>
+          <div class="flip-face glass back">
+            <p>同一个问题会被放进多个体系里分别推演，演示界面展示不同解释角度——分歧本身，往往就是问题的关键。</p>
+          </div>
+        </div>
+      </div>
+      <div class="flip reveal" data-d="2">
+        <div class="flip-inner">
+          <div class="flip-face glass">
+            <span class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"></circle><path d="M3 20c0-3.3 2.7-5 6-5s6 1.7 6 5"></path><path d="M16.5 4.6a3.5 3.5 0 0 1 0 6.8M18 15.2c2 .7 3 2.2 3 4.8"></path></svg></span>
+            <h3>关系与职业分析</h3>
+            <p>感情、合作、职业方向，按“人、事、时”分开看。</p>
+            <span class="more">HOVER ↻</span>
+          </div>
+          <div class="flip-face glass back">
+            <p>关系问题看互动结构与节奏，职业问题看阶段与匹配度。结论落在“现在适合做什么”，而不是一句吉凶。</p>
+          </div>
+        </div>
+      </div>
+      <div class="flip reveal" data-d="3">
+        <div class="flip-inner">
+          <div class="flip-face glass">
+            <span class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="2"></rect><path d="M3 9h18M8 2v4M16 2v4M8 14h4"></path></svg></span>
+            <h3>周期提醒与报告</h3>
+            <p>重要时间窗口生成提醒，定期输出个人趋势报告。</p>
+            <span class="more">HOVER ↻</span>
+          </div>
+          <div class="flip-face glass back">
+            <p>系统会记下你的问题与时间节点，在窗口临近时提醒你回看；月度报告帮你确认趋势有没有按推演走。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 5b. 紫微斗数 · 星曜图谱 ============ -->
+<section class="section ziwei" id="ziwei" data-screen-label="紫微命盘"><div class="wrap"><span class="eyebrow">紫微斗数 · 十二宫</span><h2 class="h-section">从本命星曜，读到三方四正。</h2><p class="lead">命身宫、五行局、主辅杂曜、生年四化、宫干四化与各层运限，按你的出生信息逐项展开。</p><a class="btn btn-primary" href="#ask">填写出生信息，查看双命盘 →</a></div></section>
+
+<!-- ============ 6. 分析 Dashboard ============ -->
+<section class="system-section" id="system" data-screen-label="分析系统">
+  <div class="wrap">
+    <div class="section-head center">
+      <span class="chapter" aria-hidden="true">丁</span>
+      <span class="eyebrow reveal">分析系统</span>
+      <h2 class="h-section reveal" data-d="1">把问题放进系统里，<br />它会<span class="glow-text">先帮你整理，再给你答案</span>。</h2>
+    </div>
+  </div>
+  <div class="system-sticky-zone">
+    <div class="system-sticky">
+      <div class="wrap">
+        <div class="dash">
+          <div class="dash-col" data-screen-label="状态概览">
+            <span class="dash-label">个人状态概览</span>
+            <div class="dash-id">
+              <span class="orb"></span>
+              <div><b>访客 · 丁卯日主</b><span>已录入出生信息</span></div>
+            </div>
+            <div class="gauge"><div class="g-head"><span>情绪负载</span><b>64</b></div><div class="g-track"><div class="g-fill" style="--w:64%;"></div></div></div>
+            <div class="gauge"><div class="g-head"><span>决策清晰度</span><b>41</b></div><div class="g-track"><div class="g-fill" style="--w:41%;"></div></div></div>
+            <div class="gauge"><div class="g-head"><span>关系张力</span><b>58</b></div><div class="g-track"><div class="g-fill" style="--w:58%;"></div></div></div>
+            <div class="gauge"><div class="g-head"><span>行动力</span><b>72</b></div><div class="g-track"><div class="g-fill" style="--w:72%;"></div></div></div>
+          </div>
+          <div class="dash-col" data-screen-label="问题分析面板">
+            <span class="dash-label">问题分析面板</span>
+            <div class="dash-q"><span class="tag-q">Q</span>要不要在年中接受这个新的工作机会？</div>
+            <div class="aitem"><span class="dim">命盘</span><span class="txt">当前大运偏<b>积累与收束</b>，不是激进扩张的阶段，但也没有明显阻力。</span></div>
+            
+            
+            <div class="aitem"><span class="dim">现实</span><span class="txt">薪资与职责清楚，<b>未确认项是团队与汇报线</b>——这是可以直接问清的。</span></div>
+            <div class="aitem"><span class="dim">AI 综合</span><span class="txt">不建议立刻答复。先在两周内补齐未确认项，<b>把决定放进机会窗口里做</b>。</span></div>
+          </div>
+          <div class="dash-col" data-screen-label="趋势时间轴">
+            <span class="dash-label">趋势时间轴</span>
+            <div class="tline">
+              <div class="tnode"><b>NOW</b><span>整理问题，确认条件</span></div>
+              <div class="tnode"><b>+7 天</b><span>观察期 · 不做承诺</span></div>
+              <div class="tnode"><b>+21 天</b><span>信息确认完成</span></div>
+              <div class="tnode"><b>+35 天</b><span>机会窗口开启</span></div>
+              <div class="tnode"><b>+60 天</b><span>复盘与修正</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 7. 大型品牌标语区 ============ -->
+<section class="signs" data-screen-label="品牌标语">
+  <canvas id="signs-canvas"></canvas>
+  <svg id="signs-svg" class="signs-lines" viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMid slice"></svg>
+  
+  <div class="fcard glass sg-2" aria-hidden="true"><span class="k">时间标签</span><span class="v"><em>06.18</em> 窗口临近</span></div>
+  
+  <div class="fcard glass sg-4" aria-hidden="true"><span class="k">AI 注解</span><span class="v">分歧点在「节奏」</span></div>
+  <div class="signs-inner">
+    <span class="signs-en reveal">You've felt the signs. Now see the pattern.</span>
+    <h2 class="reveal" data-d="1">你已经感觉到了很多信号。<br />现在，是时候<span class="glow-text">看懂它们</span>。</h2>
+  </div>
+</section>
+
+<!-- ============ 8. 输入问题交互区 ============ -->
+<section class="section" id="ask" data-screen-label="输入问题">
+  <div class="wrap">
+    <div class="section-head center">
+      <span class="chapter" aria-hidden="true">戊</span>
+      <span class="eyebrow reveal">一次输入 · 八字与紫微</span>
+      <h2 class="h-section reveal" data-d="1">只填一次生辰，<br />解锁<span class="glow-text">七重玄学全貌</span>。</h2>
+      <p class="lead reveal" data-d="2">八字原局与行运，紫微十二宫与四化。一次填写，分开查看各自的依据。</p>
+    </div>
+    <div class="ask-panel glass reveal" data-d="2">
+      <div class="ask-input">
+        <textarea placeholder="比如：最近在犹豫要不要换城市工作，家里人不太支持，但我自己也说不清在怕什么……"></textarea>
+      </div>
+      <div class="ask-tags">
+        <button class="ask-tag on" type="button">感情关系</button>
+        <button class="ask-tag" type="button">职业方向</button>
+        <button class="ask-tag" type="button">财运趋势</button>
+        <button class="ask-tag" type="button">人际问题</button>
+        <button class="ask-tag" type="button">自我状态</button>
+        <button class="ask-tag" type="button">年运分析</button>
+      </div>
+      <div class="ask-flow">
+        <div class="flow-step"><span class="ring"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 7"></path></svg></span><span>正在整理问题结构</span></div>
+        <div class="flow-step"><span class="ring"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 7"></path></svg></span><span>匹配分析维度</span></div>
+        <div class="flow-step"><span class="ring"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 7"></path></svg></span><span>生成趋势判断</span></div>
+        <div class="flow-step"><span class="ring"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 7"></path></svg></span><span>输出建议</span></div>
+      </div>
+      <div class="flow-done"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 7"></path></svg>分析结构已生成 · 向下查看报告示例 ↓</div>
+      <div class="ask-foot">
+        <small>仅作整理与参考，不会替你做决定。</small>
+        <button class="btn btn-primary" id="ask-go" type="button">开始生成分析 <span class="arr">→</span></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 9. 报告结果展示区 ============ -->
+
+
+<!-- ============ 10. 为什么用有朋迅 ============ -->
+<div class="sec-divider" aria-hidden="true"></div>
+
+
+<!-- ============ 11. 用户反馈区 ============ -->
+
+
+<!-- ============ 新增：八字排盘 ============ -->
+
+
+<!-- ============ 新增：记录案例 ============ -->
+<section class="section" id="cases" data-screen-label="记录案例">
+  <div class="wrap">
+    <div class="section-head center">
+      <span class="chapter" aria-hidden="true">丑</span>
+      <span class="eyebrow reveal">记录案例</span>
+      <h2 class="h-section reveal" data-d="1">你的问题，<br /><span class="glow-text">由你选择保存</span>。</h2>
+    </div>
+    <div class="ask-panel glass reveal" data-d="2">
+      <p>案例仅在主动保存后存入当前浏览器，不会自动上传。</p>
+      <a class="btn btn-ghost" href="#ask">开始记录我的问题 <span class="arr">→</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 新增：名人案例 ============ -->
+
+
+<!-- ============ 新增：八字合盘 ============ -->
+<section class="section" id="compare" data-screen-label="八字合盘">
+  <div class="wrap">
+    <div class="section-head center">
+      <span class="chapter" aria-hidden="true">卯</span>
+      <span class="eyebrow reveal">八字合盘</span>
+      <h2 class="h-section reveal" data-d="1">两个人的八字放在一起，<br />看<span class="glow-text">关系的真实结构</span>。</h2>
+    </div>
+    <div class="ask-panel glass reveal" data-d="2">
+      <p>输入双方信息，查看两份四柱、十神参照与地支配对。</p>
+      <a class="btn btn-primary" href="#ask">开始合盘分析 <span class="arr">→</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 新增：学习课堂 ============ -->
+<section class="section" id="learning" data-screen-label="学习课堂">
+  <div class="wrap">
+    <div class="section-head center">
+      <span class="chapter" aria-hidden="true">辰</span>
+      <span class="eyebrow reveal">学习课堂</span>
+      <h2 class="h-section reveal" data-d="1">从零开始，<br />系统学习<span class="glow-text">命理知识</span>。</h2>
+    </div>
+    <div class="learn-bar" id="learnBar" role="tablist" aria-label="知识分类"></div>
+    <div class="learn-grid" id="learnGrid"></div>
+    <p class="learn-hint reveal">点击任意条目，展开由古籍理论支撑的完整讲解 ↗</p>
+  </div>
+</section>
+
+<!-- ============ 新增：会员中心 ============ -->
+<section class="section" id="member" data-screen-label="会员中心">
+  <div class="wrap">
+    <div class="section-head center">
+      <span class="chapter" aria-hidden="true">巳</span>
+      <span class="eyebrow reveal">会员中心</span>
+      <h2 class="h-section reveal" data-d="1">你的个人空间，<br /><span class="glow-text">所有分析和记录</span>都在这里。</h2>
+    </div>
+    <div class="why-grid">
+      <div class="why-card glass reveal"><span class="no">01</span><h3>分析报告存档</h3><p>案例需主动点击保存，仅保留在当前浏览器；建议定期导出备份。</p></div>
+      <div class="why-card glass reveal" data-d="1"><span class="no">02</span><h3>时间查看</h3><p>当前没有自动提醒；可自行选择日期查看流年流月。</p></div>
+      <div class="why-card glass reveal" data-d="2"><span class="no">03</span><h3>服务状态</h3><p>当前未开放登录、付费会员或云端同步。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 12. Footer ============ -->
+<footer class="footer" id="about" data-screen-label="Footer">
+  <span class="chapter chapter-foot l" aria-hidden="true">壬</span>
+  <span class="chapter chapter-foot r" aria-hidden="true">癸</span>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a class="brand" href="#top"><span class="mark">迅</span><span><b>有朋迅</b><small>YOUPENGXUN</small></span></a>
+        <p>把传统术数与 AI 放进同一个框架——看清结构，而不是替你决定人生。</p>
+      </div>
+      <div class="footer-col">
+        <h4>产品</h4>
+        <a href="#modules">双命盘解析</a>
+        <a href="#modules">多方式交叉判断</a>
+        <a href="#modules">关系与职业分析</a>
+        <a href="#modules">周期提醒与报告</a>
+      </div>
+      <div class="footer-col">
+        <h4>报告方向</h4>
+        <a href="#ask">感情关系</a>
+        <a href="#ask">职业方向</a>
+        <a href="#ask">财运趋势</a>
+        <a href="#ask">自我状态与年运</a>
+      </div>
+      <div class="footer-col">
+        <h4>关于</h4>
+        <a href="index.html">创作者主页 ↗</a>
+        <a href="#ask">使用说明</a>
+        <a href="mailto:hello@youpengxun.com">联系方式</a>
+        <a href="#disclaimer">免责声明</a>
+      </div>
+    </div>
+    <div class="footer-legal" id="disclaimer">
+      <p class="disclaimer">免责声明：有朋迅提供的所有分析内容均为 AI 与传统术数结合的辅助参考，不构成法律、医疗、金融、心理治疗等专业建议，请结合现实情况独立判断。</p>
+      <div class="meta"><span>© 2026 YOUPENGXUN 有朋迅</span><span>AI × ORIENTAL WISDOM</span></div>
+    </div>
+  </div>
+</footer>
+
+<!-- ============ 知识库阅读器（玻璃态弹窗） ============ -->
+<div class="kb-modal" id="kbModal" aria-hidden="true">
+  <div class="kb-backdrop" data-kb-close></div>
+  <div class="kb-panel glass" role="dialog" aria-modal="true" aria-labelledby="kbTitle">
+    <button class="kb-close" type="button" aria-label="关闭" data-kb-close>&times;</button>
+    <div class="kb-head">
+      <span class="kb-cat" id="kbCat"></span>
+      <h2 class="kb-title" id="kbTitle"></h2>
+    </div>
+    <div class="kb-body" id="kbBody"></div>
+    <div class="kb-foot">
+      <span class="kb-prev" id="kbPrev" role="button" tabindex="0">← 上一篇</span>
+      <span class="kb-count" id="kbCount"></span>
+      <span class="kb-next" id="kbNext" role="button" tabindex="0">下一篇 →</span>
+    </div>
+  </div>
+</div>
+
+<script src="mystic.js"></script>
+<script src="vendor/iztro-local.js?v=20260921" defer></script>
+<script src="ziwei-full.js?v=20260921" defer></script>
+<script src="polish.js"></script>
+<script src="ypx-redesign.js" defer></script><!-- 视觉重构交互（Hero 视差，纯增强） -->
+<script src="starlore.js"></script>
+
+
+<!-- ===== 数据表（JS格式，兼容 file:// 协议，无需 HTTP 服务器）===== -->
+<script src="day_ganzhi_data.js" defer></script>
+<script src="jieqi_data.js" defer></script>
+<script src="year_ganzhi_data.js" defer></script>
+<script src="lunar_data.js" defer></script><!-- 农历 1990-2030 每月大小/首日公历/闰月（lunar-python 校准） -->
+
+<!-- ===== 后端接入（自建 FastAPI；未配 config 时保持静态演示）===== -->
+<script src="config.js" defer></script>
+<script src="vendor/lunar.js" defer></script>
+<script src="platform-tools.js?v=5" defer></script>
+<script src="knowledge-bazi.js?v=8" defer></script><!-- 本地八字解析引擎（离线可用） -->
+<script src="knowledge-base.js?v=4" defer></script><!-- 命理知识库（古籍理论） · 新增紫微/神煞/纳音 三分类 -->
+<script src="learning-progress.js?v=1" defer></script>
+<script src="kb-reader.js?v=1" defer></script><!-- 知识库阅读器（学习课堂交互 + 玻璃弹窗） -->
+<script src="chart.js?v=5" defer></script><!-- 八字真盘渲染器（确定性，#ask 结果上方显示排盘框架） -->
+<script src="ai-integration.js?v=5" defer></script><!-- AI 解读 / 月运（#ask） -->
+<script src="fortune-unified.js?v=20260921" defer></script><!-- 赛博神算子 · 单输入统一排盘引擎（最后加载，接管 #ask 入口） -->
+<script src="account.js" defer></script><!-- 登录注册 + 报告存档 + 历史 -->
+<script src="demo-toast.js?v=1" defer></script><!-- 演示模式提示 + 日期动态化 -->
+<script src="ypx-motion.js?v=1" defer></script><!-- 交互增强层（最后加载：北斗光标/滚动揭示/拨云见日/五行紫微微光） -->
+
+<!-- ===== 章节导航轨 + 重心分层（scrollspy） ===== -->
+<script>
+(function(){
+  var SECT = 'header.hero, section.section, section.system-section, section.signs, footer.footer';
+  var sections = Array.prototype.slice.call(document.querySelectorAll(SECT));
+  if(!sections.length) return;
+  var catMap = {
+    'Hero':'story','问题认知':'story','能力模块':'story','紫微星盘':'tool','分析系统':'tool',
+    '品牌标语':'story','输入问题':'tool','报告示例':'story','为什么':'story','用户反馈':'content',
+    '八字排盘':'tool','记录案例':'content','名人案例':'content','八字合盘':'tool','学习课堂':'content',
+    '会员中心':'content','Footer':'content'
+  };
+  var catLabel = { tool:'核心功能', story:'产品叙事', content:'延伸内容' };
+  var glyph = { 'Hero':'✦','品牌标语':'❋','报告示例':'❖','为什么':'?','Footer':'尾' };
+  var rail = document.getElementById('sideRail');
+  if(!rail) return;
+  var track = document.createElement('div'); track.className = 'rail-track'; rail.appendChild(track);
+  var items = [];
+  sections.forEach(function(el){
+    var label = el.getAttribute('data-screen-label') || el.id || el.tagName;
+    var cat = catMap[label] || 'story';
+    el.setAttribute('data-cat', cat);
+    var chEl = el.querySelector('.chapter:not(.chapter-foot), .chapter-foot');
+    var ch = glyph[label] || (chEl ? chEl.textContent.trim() : '·');
+    var dot = document.createElement('button');
+    dot.type = 'button';
+    dot.className = 'rail-dot cat-' + cat;
+    dot.setAttribute('aria-label', label);
+    dot.innerHTML = '<span class="rail-ch">' + ch + '</span><span class="rail-tip"><b>' + label + '</b> · ' + catLabel[cat] + '</span>';
+    dot.addEventListener('click', function(){
+      if(el.id){ var t = document.getElementById(el.id); if(t){ t.scrollIntoView({behavior:'smooth', block:'start'}); return; } }
+      el.scrollIntoView({behavior:'smooth', block:'start'});
+    });
+    track.appendChild(dot);
+    items.push({ el: el, dot: dot, cat: cat, label: label });
+    // 注入章节分类标签
+    var head = el.querySelector('.section-head') || el.querySelector('.zw-stage-head');
+    var host = head;
+    if(head && head.classList.contains('zw-stage-head')) host = head.querySelector(':scope > div') || head;
+    if(host){
+      var pill = document.createElement('span');
+      pill.className = 'sec-cat cat-' + cat;
+      pill.textContent = catLabel[cat];
+      host.insertBefore(pill, host.firstChild);
+    }
+  });
+
+  var navLinks = Array.prototype.slice.call(document.querySelectorAll('.nav-links a'));
+  var current = null;
+  function setActive(it){
+    items.forEach(function(x){ x.dot.classList.toggle('active', x === it); });
+    var id = it.el.id;
+    navLinks.forEach(function(a){ a.classList.toggle('active', !!id && a.getAttribute('href') === '#' + id); });
+  }
+  function onScroll(){
+    var mid = window.innerHeight * 0.40;
+    var best = null;
+    for(var i = 0; i < items.length; i++){
+      var r = items[i].el.getBoundingClientRect();
+      if(r.top <= mid && r.bottom >= mid){ best = items[i]; break; }
+    }
+    if(!best){
+      for(var j = items.length - 1; j >= 0; j--){
+        if(items[j].el.getBoundingClientRect().top < mid){ best = items[j]; break; }
+      }
+    }
+    if(best && best !== current){ current = best; setActive(best); }
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll);
+  onScroll();
+})();
+</script>
+<script src="decision-guide.js?v=20260921" defer></script>
+<script src="action-plan.js?v=2" defer></script>
+<script src="detailed-reading.js?v=1" defer></script>
+<script src="pair-guide.js?v=1" defer></script>
+<script src="month-focus.js?v=3" defer></script>
+<script src="personal-transits.js?v=7" defer></script>
+</body>
+</html>
+
+
+

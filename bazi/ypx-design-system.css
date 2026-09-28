@@ -1,0 +1,178 @@
+/* ============================================================
+   有朋迅 · 设计系统组件精修层（ypx-design-system.css）
+   依据 DESIGN.md · Apple 排版 × Tesla 暗夜 × Stripe 数据精确
+   主色 --hue:262 不变；叠加在 ypx-redesign.css 之后，纯增强。
+   ============================================================ */
+
+/* ---------- 0. 设计令牌扩展（排版/阴影/间距/圆角） ---------- */
+:root{
+  /* 排版层级 */
+  --t-hero: clamp(36px, 5.6vw, 72px);
+  --t-h1:   clamp(26px, 3.1vw, 42px);
+  --t-h2:   24px;
+  --t-h3:   18px;
+  --t-lead: clamp(16px, 1.4vw, 19px);
+  --t-body: 15px;
+  --t-small:13px;
+  --t-eyebrow: 12.5px;
+  --t-nano: 10.5px;
+
+  /* 阴影系统（紫调冷阴影） */
+  --sh-xs: 0 1px 2px rgba(3,0,14,.40);
+  --sh-sm: 0 4px 12px rgba(3,0,14,.45);
+  --sh-md: 0 12px 32px rgba(3,0,14,.50);
+  --sh-lg: 0 24px 56px rgba(2,0,12,.50);
+  --sh-xl: 0 32px 72px rgba(2,0,12,.55), 0 0 24px hsla(262,90%,70%,.20);
+  --sh-2xl:0 40px 90px rgba(2,0,12,.60), 0 0 40px hsla(262,90%,72%,.30);
+
+  /* 间距标尺（4px 基数） */
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:24px; --sp-6:32px;
+  --sp-7:48px; --sp-8:64px; --sp-9:80px; --sp-10:104px; --sp-11:128px; --sp-12:160px;
+
+  /* 圆角标尺 */
+  --r-sm:8px; --r-md:12px; --r-lg:18px; --r-xl:26px; --r-pill:999px;
+}
+
+/* ---------- 1. 排版一致性（精修既有选择器，不改 HTML） ---------- */
+/* 标题宋体权重统一，字距收紧 */
+.h-display{ font-family:var(--font-display); font-weight:600; letter-spacing:.01em; }
+.h-section{ font-family:var(--font-display); font-weight:600; letter-spacing:.005em; }
+/* 正文行高与字距 */
+.lead{ font-family:var(--font-body); line-height:1.9; text-wrap:pretty; }
+p, li{ font-size:var(--t-body); line-height:1.75; }
+/* eyebrow 英文统一 tabular + uppercase 已有，强化前置线 */
+.eyebrow{ font-family:var(--font-en); font-variant-numeric:tabular-nums; }
+/* 数据/数字一律对齐 */
+.numerals, .yc-pillars, .yc-meta, .yc-wxv, .yc-gv, .yc-wxpct, .yc-score{
+  font-variant-numeric:tabular-nums;
+}
+
+/* ---------- 2. 按钮系统（4 变体，补齐 secondary/danger） ---------- */
+.btn{ border-radius:var(--r-md); padding:14px 26px; font-weight:500; font-size:var(--t-body);
+      letter-spacing:.01em; transition:transform .3s var(--ypx-ease), box-shadow .3s var(--ypx-ease),
+      background .3s, border-color .3s; }
+.btn-primary{ box-shadow:var(--sh-md), 0 0 28px hsla(262,88%,68%,.45); }
+.btn-primary:hover{ transform:translateY(-1px); box-shadow:var(--sh-lg), 0 0 44px hsla(262,90%,72%,.6); }
+.btn-primary:active{ transform:translateY(0); box-shadow:var(--sh-sm); }
+/* Secondary 变体（若页面无则可用 class 兜底） */
+.btn-secondary{
+  color:var(--ink); background:hsla(262,60%,70%,.10);
+  border:1px solid var(--line-strong);
+}
+.btn-secondary:hover{ border-color:var(--vio); box-shadow:0 0 20px hsla(262,85%,70%,.25); transform:translateY(-1px); }
+/* Ghost 已有，仅统一圆角 */
+.btn-ghost{ border-radius:var(--r-md); }
+/* Danger */
+.btn-danger{
+  background:linear-gradient(120deg,#FF9C9C,#FF7A8A); color:#1a0606; border:none;
+  box-shadow:0 0 22px rgba(255,122,138,.4), var(--sh-sm);
+}
+.btn-danger:hover{ transform:translateY(-1px); box-shadow:0 0 32px rgba(255,122,138,.55), var(--sh-md); }
+
+/* ---------- 3. 徽章 / 标签系统 ---------- */
+.ypx-badge{
+  display:inline-flex; align-items:center; gap:6px; padding:4px 10px;
+  border-radius:var(--r-pill); font-size:11.5px; font-family:var(--font-en);
+  letter-spacing:.1em; line-height:1; white-space:nowrap;
+}
+.ypx-badge::before{ content:""; width:6px; height:6px; border-radius:50%; background:currentColor; opacity:.9; }
+.ypx-badge.tool{ background:linear-gradient(120deg,hsla(262,80%,64%,.2),hsla(280,70%,55%,.1));
+                  box-shadow:0 0 22px hsla(262,90%,70%,.28); color:var(--vio-soft); }
+.ypx-badge.gold{ background:hsla(43,86%,60%,.16); color:var(--ypx-gold);
+                  border:1px solid hsla(43,86%,60%,.3); }
+.ypx-badge.info{ background:hsla(234,80%,60%,.14); color:var(--blue);
+                  border:1px solid hsla(234,80%,68%,.28); }
+.ypx-badge.muted{ background:hsla(262,30%,40%,.18); color:var(--ink-3); border:1px solid var(--line); }
+
+/* ---------- 4. 卡片阴影分层（按场景映射到阴影系统） ---------- */
+.glass{ box-shadow:var(--sh-md), inset 0 1px 0 hsla(262,80%,85%,.08); }
+.glass:hover{ box-shadow:var(--sh-lg), var(--glow); }
+/* 舞台（核心功能区）用 xl 阴影 */
+[data-cat="tool"] > .wrap{ box-shadow:var(--sh-xl); }
+/* 报告/提问面板 lg */
+.ask-panel, .report-summary{ box-shadow:var(--sh-md); }
+.ask-panel:hover, .report-summary:hover{ box-shadow:var(--sh-lg), var(--glow); }
+
+/* ---------- 5. 输入控件统一（历法/时间/性别表单） ---------- */
+.bazi-form input, .bazi-form select,
+.zw-form input, .zw-form select{
+  background:hsla(262,50%,20%,.40); border:1px solid var(--line-strong);
+  border-radius:var(--r-md); padding:12px 14px; color:var(--ink);
+  font-size:14px; font-family:var(--font-body); transition:border-color .25s, box-shadow .25s;
+}
+.bazi-form input:focus, .bazi-form select:focus,
+.zw-form input:focus, .zw-form select:focus{
+  outline:none; border-color:var(--vio);
+  box-shadow:0 0 0 3px hsla(262,90%,70%,.18), 0 0 18px hsla(262,90%,70%,.25);
+}
+.bazi-form input::placeholder, .zw-form input::placeholder{ color:hsla(262,30%,78%,.4); }
+.bazi-form label, .zw-form label{ font-size:var(--t-small); color:var(--ink-3); letter-spacing:.02em; }
+
+/* ---------- 6. 顶级排盘数据表（Stripe 式精度升级） ---------- */
+.ypx-chart{ font-variant-numeric:tabular-nums; }
+/* 表格外框：发丝边 + 更深底 + 顶部高光 */
+.ypx-chart .yc-pillars{
+  border:1px solid hsla(262,55%,68%,.22);
+  box-shadow:var(--sh-md), inset 0 1px 0 hsla(262,80%,85%,.06);
+}
+/* 表头：发丝下边 + 微高光 */
+.ypx-chart .yc-pillars thead th{
+  border-bottom:1px solid hsla(262,55%,68%,.22);
+  box-shadow:inset 0 -1px 0 hsla(262,80%,85%,.04);
+}
+/* 行：发丝分隔 + hover 高亮 */
+.ypx-chart .yc-pillars tbody tr{ border-bottom:1px solid hsla(262,45%,68%,.08); transition:background .3s var(--ypx-ease); }
+.ypx-chart .yc-pillars tbody tr:hover{ background:hsla(262,60%,60%,.06); }
+.ypx-chart .yc-pillars tbody tr:last-child{ border-bottom:none; }
+/* 日柱格：内描边辉光环（视觉锚点） */
+.ypx-chart td.yc-day{
+  box-shadow:inset 0 0 0 1px hsla(262,80%,70%,.28), 0 0 18px hsla(262,80%,60%,.16);
+}
+.ypx-chart .yc-pillars td.yc-day::before,
+.ypx-chart .yc-pillars td.yc-day::after{ opacity:.85; }
+/* 干支大字：增加微辉光，提升"刻印感" */
+.ypx-chart .yc-stem-big, .ypx-chart .yc-branch-big{
+  text-shadow:0 0 14px hsla(262,60%,50%,.35), 0 1px 2px rgba(0,0,0,.5);
+}
+/* 藏干标签更精致 */
+.ypx-chart .yc-hid-tag{ box-shadow:0 1px 2px rgba(0,0,0,.3); }
+/* 纳音行：等宽 + 弱化 */
+.ypx-chart .yc-ny-td{ font-variant-numeric:tabular-nums; letter-spacing:.04em; }
+/* 神煞标签：圆角更统一 */
+.ypx-chart .yc-ss-tag{ border-radius:var(--r-pill); transition:border-color .25s, background .25s; }
+.ypx-chart .yc-ss-tag:hover{ border-color:hsla(262,90%,72%,.5); background:hsla(262,55%,50%,.28); }
+/* 当运大运：金边辉光环（点睛金唯一铺到组件级的位置） */
+.ypx-chart .yc-yun.yc-yun-cur{
+  box-shadow:0 0 0 1px hsla(48,80%,65%,.5), 0 0 22px hsla(48,80%,55%,.3);
+}
+/* 五行/格局进度条：圆角 + 渐变填充更顺滑 */
+.ypx-chart .yc-wxbar i, .ypx-chart .yc-gbar i{ border-radius:var(--r-pill); }
+
+/* ---------- 7. 表单区"舞台"内层圆角与对齐 ---------- */
+.bazi-form, .zw-form{ border-radius:var(--r-lg); }
+.bazi-form .form-grid, .zw-form .form-grid{ gap:var(--sp-4); }
+
+/* ---------- 8. 微交互：链接与可点元素 ---------- */
+a{ transition:color .25s; }
+.glow-text{ transition:filter .4s var(--ypx-ease); }
+.glow-text:hover{ filter:drop-shadow(0 0 18px hsla(262,90%,72%,.5)); }
+
+/* ---------- 9. 焦点可达性（键盘导航） ---------- */
+.btn:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible{
+  outline:2px solid var(--vio-soft); outline-offset:2px;
+}
+
+/* ---------- 10. 移动端排盘表降级 ---------- */
+@media (max-width:600px){
+  .ypx-chart .yc-stem-big, .ypx-chart .yc-branch-big{ font-size:25px; }
+  .ypx-chart .yc-pillars .yc-rl{ width:64px; font-size:11.5px; padding-right:8px; }
+  .ypx-chart .yc-pillars td{ padding:7px 3px; font-size:12px; }
+  .ypx-chart .yc-hid-line b{ font-size:12px; }
+  .ypx-chart .yc-hid-god{ font-size:9.5px; }
+}
+
+/* ---------- 11. 降级：减少动效 ---------- */
+@media (prefers-reduced-motion: reduce){
+  .ypx-chart .yc-pillars tbody tr,
+  .btn, .glass, .glow-text{ transition:none !important; }
+}

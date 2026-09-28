@@ -1,0 +1,19 @@
+/* Browser acceptance fixes, 2026-09-15: preserve existing theme. */
+#cases{display:block!important}
+#cases .ypx-local-tools{gap:16px}
+.ypx-local-tools input,.ypx-local-tools textarea,.ypx-local-tools select,.ypx-pair-form input,.ypx-pair-form select{box-sizing:border-box;max-width:100%;min-width:0;width:100%;padding:12px;background:#fffdf8;color:#302637;border:1px solid #a995bb;border-radius:8px;font:inherit}
+.ypx-case-entry{padding:16px;margin:16px 0;border:1px solid #d8cce3;border-radius:12px}
+.ypx-case-entry>*{margin-block:6px}
+.ypx-local-tools input[type=file]{font-size:14px}
+.ypx-pair-form{display:grid;gap:16px}.ypx-pair-form fieldset{min-width:0;display:grid;gap:12px;border:1px solid #d8cce3;border-radius:12px;padding:16px}
+.ypx-local-actions{display:flex;gap:10px;flex-wrap:wrap}
+#ypx-transits{display:block;max-width:none;width:100%;box-sizing:border-box}
+#ypx-transits>label{margin-top:20px}#ypx-transits>.btn{display:inline-flex;margin-right:8px}
+#ypx-transits details>summary{cursor:pointer;padding:12px 0;line-height:1.6}
+.ypx-pair-table{width:100%;border-collapse:collapse;table-layout:fixed}.ypx-pair-table td,.ypx-pair-table th{padding:10px;overflow-wrap:anywhere;border:1px solid #d8cce3}
+.ypx-snapshot{white-space:pre-wrap;overflow-wrap:anywhere}
+.ypx-learning-search button{max-width:100%;white-space:normal;text-align:left}
+@media(max-width:600px){.uf-form,.uf-row,.mf-fields>*{min-width:0}.uf-form input,.uf-form select{box-sizing:border-box;max-width:100%;min-width:0}.ypx-local-tools{padding:18px!important}.ypx-local-tools .btn{max-width:100%;white-space:normal}.ypx-transits{padding:16px}.ypx-transits input[type=datetime-local]{width:100%;min-width:0}.ypx-pair-table{font-size:13px}.ypx-pair-table td,.ypx-pair-table th{padding:6px}.ypx-article-actions{display:flex;gap:8px;flex-wrap:wrap}}
+@media(max-width:600px){.hero,.voice-stage{overflow:clip!important}html,body{max-width:100%;overflow-x:clip!important}.page-bg,#om-splash,#om-veil,.ypx-dipper{width:100%!important;max-width:100%!important}}
+
+.release-notice{padding:14px 24px;background:#eee7f5;color:#49335f;font:14px/1.7 system-ui;position:relative;z-index:2}

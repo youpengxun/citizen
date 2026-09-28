@@ -1,0 +1,256 @@
+/* ============================================================
+   有朋迅 · 视觉重构（ypx-redesign）
+   主色 --hue:262 紫金主题不变；纯增强层，不隐藏任何内容。
+   ============================================================ */
+
+/* ---------- 0. 设计令牌（在既有变量上扩展） ---------- */
+:root{
+  --ypx-stage: hsla(262, 58%, 52%, .14);
+  --ypx-gold: hsl(43, 86%, 70%);          /* 点睛金，仅作极小面积点缀 */
+  --ypx-ease: cubic-bezier(.2,.7,.3,1);
+}
+
+/* ---------- 1. 深空极光背景（固定层，置于最底） ---------- */
+body::before{
+  content:""; position:fixed; inset:-10% -10% auto -10%; height:120%; z-index:-1;
+  pointer-events:none;
+  background:
+    radial-gradient(46% 42% at 18% 4%,  hsla(280,72%,48%,.22), transparent 62%),
+    radial-gradient(40% 40% at 88% 14%, hsla(224,78%,52%,.16), transparent 60%),
+    radial-gradient(52% 46% at 52% 96%, hsla(262,74%,42%,.20), transparent 62%),
+    radial-gradient(36% 36% at 8% 64%,  hsla(300,60%,46%,.10), transparent 60%);
+  background-size:160% 160%;
+  animation: ypxAurora 26s ease-in-out infinite alternate;
+  filter: blur(8px);
+}
+@keyframes ypxAurora{
+  0%   { background-position:0% 0%,   100% 0%,  50% 100%, 0% 50%; }
+  50%  { background-position:30% 20%, 70% 10%, 40% 80%, 20% 60%; }
+  100% { background-position:10% 40%, 90% 30%, 55% 90%, 10% 40%; }
+}
+
+/* 极淡颗粒质感（premium 感），不遮挡交互 */
+.page-bg::after{
+  content:""; position:absolute; inset:0; pointer-events:none; opacity:.05;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  mix-blend-mode:overlay;
+}
+
+/* ---------- 2. 定制滚动条 ---------- */
+::-webkit-scrollbar{ width:11px; height:11px; }
+::-webkit-scrollbar-track{ background:var(--bg-0); }
+::-webkit-scrollbar-thumb{
+  background:linear-gradient(180deg, var(--vio-deep), var(--vio));
+  border-radius:999px; border:2px solid var(--bg-0);
+}
+::-webkit-scrollbar-thumb:hover{ background:linear-gradient(180deg, var(--vio), var(--vio-soft)); }
+html{ scrollbar-color: var(--vio-deep) var(--bg-0); scrollbar-width:thin; }
+
+/* ---------- 3. HERO：巨标题渐变 + 聚光强化 ---------- */
+.hero{ isolation:isolate; }
+.hero .h-display{
+  font-size:clamp(36px, 5.6vw, 72px);
+  line-height:1.12;
+  letter-spacing:.01em;
+  background:linear-gradient(180deg, #ffffff 0%, var(--vio-soft) 52%, var(--vio) 100%);
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+  filter:drop-shadow(0 0 34px hsla(262,90%,72%,.34));
+}
+.hero .lead{ font-size:clamp(16px,1.4vw,19px); max-width:34em; }
+/* Hero 中心聚光更亮、更大 */
+.hero::after{
+  width:min(1000px,96vw); height:min(700px,80vh);
+  background:radial-gradient(50% 50% at 50% 50%, hsla(262,88%,62%,.28), transparent 70%);
+  filter:blur(10px);
+}
+/* Hero 顶部呼吸光环（绕标题的玄环） */
+.hero-badge{ position:relative; }
+.hero-badge::before{
+  content:""; position:absolute; left:50%; top:50%; width:340px; height:340px;
+  transform:translate(-50%,-50%); border-radius:50%;
+  background:conic-gradient(from 0deg, transparent, hsla(262,90%,72%,.18), transparent 40%);
+  animation:ypxSpin 18s linear infinite; z-index:-1; pointer-events:none;
+}
+@keyframes ypxSpin{ to{ transform:translate(-50%,-50%) rotate(360deg); } }
+
+/* 浮动卡轻微漂浮，强化“玄学氛围”而非信息噪点 */
+.hero-cards .fcard{ animation:ypxFloat 7s ease-in-out infinite; }
+.hero-cards .fc-1{ animation-delay:0s; }
+.hero-cards .fc-2{ animation-delay:.6s; }
+.hero-cards .fc-3{ animation-delay:1.2s; }
+.hero-cards .fc-4{ animation-delay:1.8s; }
+.hero-cards .fc-5{ animation-delay:2.4s; }
+.hero-cards .fc-6{ animation-delay:3.0s; }
+@keyframes ypxFloat{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-12px); } }
+.hero-cards .fcard{ opacity:.82; }
+
+/* ---------- 4. 章节巨型水印数字 + 左侧光条 ---------- */
+.section-head, .zw-stage-head{ position:relative; }
+.section-head{ overflow:hidden; }
+.section-head .chapter,
+.zw-stage-head .chapter{
+  position:absolute; top:-0.28em; right:0;
+  font-family:var(--font-display); font-weight:700;
+  font-size:clamp(92px, 13vw, 184px); line-height:.8;
+  color:transparent;
+  background:linear-gradient(135deg, hsla(262,92%,82%,.18), hsla(262,70%,60%,.05));
+  -webkit-background-clip:text; background-clip:text;
+  pointer-events:none; user-select:none; z-index:0;
+}
+.zw-stage-head > div{ overflow:hidden; }
+/* 左则竖向光条（仅左侧对齐的 head 用） */
+.section-head:not(.center)::before{
+  content:""; position:absolute; left:-2px; top:.2em; bottom:.2em; width:3px;
+  background:linear-gradient(180deg, transparent, var(--vio), transparent);
+  border-radius:3px; box-shadow:0 0 14px hsla(262,90%,70%,.6); z-index:1;
+}
+.section-head > *, .zw-stage-head > div > *{ position:relative; z-index:1; }
+
+/* eyebrow 加前置短线 */
+.eyebrow{ display:inline-flex; align-items:center; gap:10px; }
+.eyebrow::before{
+  content:""; width:26px; height:1px;
+  background:linear-gradient(90deg, var(--vio), transparent);
+}
+.section-head.center .eyebrow{ justify-content:center; }
+
+/* 标题更大、glow-text 更亮 */
+.h-section{ font-size:clamp(26px, 3.1vw, 42px); letter-spacing:.005em; }
+.glow-text{
+  background:linear-gradient(105deg, var(--vio-soft), var(--blue) 55%, var(--vio));
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+  text-shadow:0 0 26px hsla(262,90%,70%,.30);
+}
+
+/* ---------- 5. 核心功能区 = 发光“舞台” ---------- */
+[data-cat="tool"]{
+  position:relative;
+  background:
+    radial-gradient(120% 80% at 50% 0%, hsla(262,60%,50%,.16), transparent 60%),
+    radial-gradient(80% 60% at 50% 120%, hsla(280,60%,45%,.10), transparent 60%);
+}
+/* 顶部光带（增强，呼吸） */
+[data-cat="tool"]::before{
+  content:""; position:absolute; left:0; right:0; top:0; height:4px;
+  background:linear-gradient(90deg, transparent, var(--vio-soft), var(--vio), var(--vio-soft), transparent);
+  opacity:.85; pointer-events:none; z-index:2;
+  animation:ypxBand 5s ease-in-out infinite alternate;
+}
+@keyframes ypxBand{ from{ opacity:.55; } to{ opacity:1; } }
+/* 旋转发光描边（舞台框） */
+[data-cat="tool"]::after{
+  content:""; position:absolute; inset:0; pointer-events:none; z-index:0;
+  padding:1.5px;
+  background:linear-gradient(115deg, transparent 30%, hsla(262,92%,74%,.55) 50%, transparent 70%);
+  background-size:280% 280%;
+  -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+          mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor; mask-composite:exclude;
+  animation:ypxSheen 7s linear infinite;
+}
+@keyframes ypxSheen{ 0%{ background-position:0% 0%; } 100%{ background-position:280% 280%; } }
+/* 核心功能区内容包进玻璃舞台 */
+[data-cat="tool"] > .wrap{
+  position:relative; z-index:1;
+  margin-top:18px; margin-bottom:18px;
+  background:linear-gradient(180deg, hsla(262,55%,55%,.08), hsla(262,50%,30%,.035));
+  border:1px solid hsla(262,70%,72%,.20);
+  border-radius:26px;
+  padding:clamp(26px,3.6vw,54px);
+  box-shadow:0 30px 80px rgba(2,0,12,.42), inset 0 1px 0 hsla(262,80%,86%,.10);
+  backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+}
+
+/* ---------- 6. 装饰性分隔（中央菱形 + 双线） ---------- */
+.sec-divider{
+  position:relative; height:1px; margin:8px auto;
+  background:linear-gradient(90deg, transparent, var(--line-strong) 22%, var(--line-strong) 78%, transparent);
+  max-width:min(1100px, 92vw);
+}
+.sec-divider::after{
+  content:""; position:absolute; left:50%; top:50%; width:11px; height:11px;
+  transform:translate(-50%,-50%) rotate(45deg);
+  background:linear-gradient(135deg, var(--vio-soft), var(--vio));
+  box-shadow:0 0 16px hsla(262,90%,70%,.7);
+  border:2px solid var(--bg-1);
+}
+
+/* ---------- 7. 玻璃卡片：分层阴影 + 悬浮辉光 ---------- */
+.glass{
+  transition:transform .45s var(--ypx-ease), box-shadow .45s var(--ypx-ease), border-color .45s var(--ypx-ease);
+}
+.rcard, .why-card, .vcard, .layer, .learn-col, .case-row, .bf-item, .flip-face, .dash-col{
+  border:1px solid var(--line-strong);
+}
+.rcard:hover, .why-card:hover, .vcard:hover, .layer:hover, .learn-col:hover, .case-row:hover, .bf-item:hover{
+  transform:translateY(-6px);
+  border-color:hsla(262,90%,72%,.5);
+  box-shadow:0 26px 60px rgba(2,0,12,.5), var(--glow);
+}
+/* 名人案例八字格高亮 */
+.case-bazi span{
+  display:inline-flex; align-items:center; justify-content:center;
+  min-width:30px; height:34px; margin:0 2px; padding:0 4px;
+  border-radius:9px; font-family:var(--font-display); font-size:18px;
+  color:var(--ink); background:hsla(262,60%,62%,.10);
+  border:1px solid var(--line-strong);
+}
+.case-row:hover .case-bazi span{ border-color:hsla(262,90%,72%,.55); box-shadow:0 0 14px hsla(262,90%,70%,.3); }
+
+/* 学习课堂列表分隔更精致 */
+.learn-list li{ border-bottom:1px dashed var(--line); }
+
+/* ---------- 8. 按钮流光 ---------- */
+.btn{ position:relative; overflow:hidden; }
+.btn-primary::after{
+  content:""; position:absolute; top:0; left:-130%; width:55%; height:100%;
+  transform:skewX(-20deg);
+  background:linear-gradient(90deg, transparent, hsla(0,0%,100%,.38), transparent);
+  transition:left .65s var(--ypx-ease); pointer-events:none;
+}
+.btn-primary:hover::after{ left:135%; }
+.arr{ display:inline-block; transition:transform .3s var(--ypx-ease); }
+.btn:hover .arr{ transform:translateX(4px); }
+
+/* ---------- 9. 章节导航轨：激活脉冲 ---------- */
+.rail-dot.active{ animation:ypxPulse 2.4s ease-in-out infinite; }
+@keyframes ypxPulse{
+  0%,100%{ box-shadow:0 0 16px hsla(262,90%,70%,.6); }
+  50%    { box-shadow:0 0 30px hsla(262,92%,74%,.95); }
+}
+.rail-dot.cat-tool .rail-ch{ color:var(--vio-soft); }
+
+/* ---------- 10. 导航强化 ---------- */
+.nav{ backdrop-filter:blur(16px) saturate(140%); -webkit-backdrop-filter:blur(16px) saturate(140%); }
+.nav-links > a.active{ color:var(--ink); background:hsla(262,70%,70%,.12); box-shadow:inset 0 0 0 1px hsla(262,80%,70%,.25); }
+
+/* 注入的章节分类标签：核心功能更醒目 */
+.sec-cat.cat-tool{
+  font-family:var(--font-en); letter-spacing:.2em;
+  background:linear-gradient(120deg, hsla(262,80%,64%,.20), hsla(280,70%,55%,.10));
+  box-shadow:0 0 22px hsla(262,90%,70%,.28);
+}
+.sec-cat::before{ box-shadow:0 0 8px hsla(262,90%,70%,.8); }
+
+/* ---------- 11. Footer 顶光 ---------- */
+.footer{ position:relative; }
+.footer::before{
+  content:""; position:absolute; left:0; right:0; top:0; height:2px;
+  background:linear-gradient(90deg, transparent, var(--vio), transparent);
+  box-shadow:0 0 22px hsla(262,90%,70%,.5);
+}
+
+/* ---------- 12. 报告摘要 / 提问面板 焦点态 ---------- */
+.ask-panel, .report-summary{ transition:border-color .4s, box-shadow .4s, transform .4s var(--ypx-ease); }
+.ask-panel:hover, .report-summary:hover{ border-color:hsla(262,90%,72%,.45); box-shadow:0 20px 50px rgba(2,0,12,.4), var(--glow); }
+
+/* ---------- 13. 性能与降级 ---------- */
+@media (prefers-reduced-motion: reduce){
+  body::before, .hero-badge::before, .hero-cards .fcard,
+  [data-cat="tool"]::before, [data-cat="tool"]::after, .rail-dot.active{
+    animation:none !important;
+  }
+}
+@media (max-width:1080px){
+  .side-rail{ display:none; }
+}

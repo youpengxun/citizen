@@ -1,0 +1,108 @@
+/* ============================================================
+   polish — 章节节奏 / 开屏 / 进度条 / 跨页转场 / 涟漪
+   ============================================================ */
+/* 滚动进度星轨 */
+#om-progress {
+  position: fixed; top: 0; left: 0; height: 2px; width: 0; z-index: 300;
+  background: linear-gradient(90deg, var(--vio-deep), var(--vio-soft));
+  box-shadow: 0 0 12px hsla(var(--hue), 90%, 70%, .8);
+  pointer-events: none;
+}
+
+/* 开屏星空 */
+#om-splash {
+  position: fixed; inset: 0; z-index: 999;
+  background: radial-gradient(700px 500px at 50% 46%, hsla(var(--hue), 70%, 40%, .2), transparent 70%), var(--bg-0);
+  display: grid; place-items: center;
+  transition: opacity .55s ease, visibility .55s;
+  animation: omSplashAway .55s ease 1.6s forwards;
+}
+#om-splash.gone { opacity: 0; visibility: hidden; }
+@keyframes omSplashAway { to { opacity: 0; visibility: hidden; } }
+#om-splash .mark {
+  width: 64px; height: 64px; border-radius: 50%;
+  display: grid; place-items: center;
+  font-family: var(--font-display); font-weight: 700; font-size: 28px; color: #0d0620;
+  background: conic-gradient(from 200deg, var(--vio-soft), var(--vio), var(--blue), var(--vio-soft));
+  box-shadow: 0 0 34px hsla(var(--hue), 90%, 70%, .55);
+  animation: omSplashPulse 1.6s ease-in-out infinite;
+}
+@keyframes omSplashPulse { 0%, 100% { transform: scale(.94); } 50% { transform: scale(1.05); } }
+
+/* 跨页转场幕布 */
+#om-veil {
+  position: fixed; inset: 0; z-index: 998;
+  background: var(--bg-0); opacity: 0; pointer-events: none;
+  transition: opacity .32s ease;
+}
+#om-veil.on { opacity: 1; pointer-events: auto; }
+
+/* 章节字号 · 叙事节奏 */
+.section-head { position: relative; }
+.dim-copy { position: relative; }
+.chapter {
+  position: absolute; top: -54px; left: -14px; z-index: 0;
+  font-family: var(--font-display); font-weight: 600;
+  font-size: clamp(110px, 12vw, 170px); line-height: 1;
+  color: hsla(var(--hue), 75%, 80%, .065);
+  pointer-events: none; user-select: none;
+}
+.section-head.center .chapter { left: 50%; transform: translateX(-50%); }
+/* 壬癸 · 上移至页脚上方 */
+.chapter-foot { top: -156px; bottom: auto; }
+.chapter-foot.l { left: 26px; }
+.chapter-foot.r { left: auto; right: 26px; }
+/* 区块间星轨分隔 */
+.sec-divider {
+  width: min(var(--wrap), calc(100% - 64px));
+  margin: 0 auto; height: 1px; position: relative;
+  background: linear-gradient(90deg, transparent, var(--line-strong), transparent);
+}
+.sec-divider::after {
+  content: ""; position: absolute; top: -2.5px; left: 50%;
+  width: 6px; height: 6px; border-radius: 50%; transform: translateX(-50%);
+  background: var(--vio-soft); box-shadow: 0 0 10px hsla(var(--hue), 90%, 70%, .8);
+}
+
+/* 宫位点击涟漪 */
+.zw-cell { overflow: hidden; }
+.zw-ripple {
+  position: absolute; width: 12px; height: 12px; border-radius: 50%;
+  background: hsla(var(--hue), 90%, 80%, .45);
+  transform: translate(-50%, -50%); pointer-events: none;
+  animation: zwRip .65s ease-out forwards;
+}
+@keyframes zwRip { to { width: 260px; height: 260px; opacity: 0; } }
+
+@media (max-width: 720px) {
+  .chapter { font-size: 90px; top: -42px; }
+}
+
+/* 二十八宿装饰星座 */
+.starlore {
+  position: absolute; z-index: -1; pointer-events: none; user-select: none;
+  display: flex; align-items: flex-start; gap: 12px; opacity: .9;
+}
+.starlore svg { max-width: min(32vw, 640px); height: auto; }
+.starlore svg line { stroke: hsla(var(--hue), 75%, 78%, .4); stroke-width: 1.2; }
+.starlore svg .sl-halo {
+  fill: none; stroke: hsla(var(--hue), 85%, 80%, .45); stroke-width: 1;
+  stroke-dasharray: 3 5;
+  animation: slHalo 14s linear infinite;
+  transform-origin: center; transform-box: fill-box;
+}
+@keyframes slHalo { to { transform: rotate(360deg); } }
+.starlore svg circle {
+  fill: hsla(var(--hue), 90%, 84%, .85);
+  filter: drop-shadow(0 0 4px hsla(var(--hue), 90%, 72%, .7));
+  animation: slTwinkle 3.4s ease-in-out infinite;
+}
+@keyframes slTwinkle { 0%, 100% { opacity: .35; } 50% { opacity: 1; } }
+.starlore i {
+  font-style: normal; font-family: var(--font-display);
+  font-size: 22px; letter-spacing: .34em; color: hsla(var(--hue), 58%, 84%, .65);
+  writing-mode: vertical-rl; padding-top: 12px;
+  text-shadow: 0 0 14px hsla(var(--hue), 85%, 70%, .35);
+}
+@media (max-width: 1100px) { .starlore { display: none; } }
+@media (prefers-reduced-motion: reduce) { .starlore svg circle { animation: none; } }

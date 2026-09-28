@@ -1,0 +1,36 @@
+/* 原八字子站：浅色阅读层。限定命盘与知识弹窗，不改变计算。 */
+.yc-wrap{color:#292632!important}
+.yc-wrap .yc-pillars,.yc-wrap .yc-card{background:#fffdf8!important;border:1px solid #d5cfc3!important;box-shadow:none!important}
+.yc-wrap .yc-pillars thead th{background:#eee9df!important;color:#302d37!important;text-shadow:none!important;border-color:#d5cfc3!important}
+.yc-wrap .yc-pillars td{color:#36323e!important;border-bottom:1px solid #e4dfd5!important}
+.yc-wrap .yc-pillars .yc-rl{background:#f5f1e9!important;color:#554d42!important}
+.yc-wrap .yc-pillars .yc-day,.yc-wrap .yc-pillars thead th.yc-day-h{background:#eee8f6!important;color:#3d2d56!important;box-shadow:none!important}
+.yc-wrap .yc-h,.yc-wrap .yc-ct,.yc-wrap .yc-gk,.yc-wrap .yc-wxk,.yc-wrap .yc-wxv,.yc-wrap .yc-wxpct,.yc-wrap .yc-gv,.yc-wrap .yc-hid-god,.yc-wrap .yc-yy,.yc-wrap .yc-rli,.yc-wrap .yc-empty{color:#56505e!important;opacity:1!important;text-shadow:none!important}
+.yc-wrap .yc-hid-tag{color:#49404e!important;background:#e7e1ed!important;border-color:#ccc3d7!important}
+.yc-wrap .yc-meta,.yc-wrap .yc-ln{background:#f2edf7!important;color:#453950!important;border-color:#d7cde3!important}
+.yc-wrap .yc-ss-tag,.yc-wrap .yc-kw-i{background:#e9e0f0!important;color:#4e3667!important;border:1px solid #d1c1df!important}
+.yc-wrap .yc-yun,.yc-wrap .yc-gj{background:#f5f1e9!important;border-color:#d5cfc3!important;color:#38313f!important}
+.yc-wrap .yc-yun b,.yc-wrap .yc-yun span,.yc-wrap .yc-gj b,.yc-wrap .yc-gj span{color:#443b4d!important}
+.yc-wrap .yc-yun-cur{background:#e6ddf1!important;border-color:#765a91!important;box-shadow:none!important}
+.yc-wrap .yc-yun-cur::after{color:#fff!important;background:#654a82!important}
+.yc-wrap .yc-wxbar,.yc-wrap .yc-gbar{background:#e8e3db!important}
+.yc-wrap .yc-ji-c{color:#a12835!important}
+/* 去掉弹窗面板透光和白色渐变字，遮罩仅影响背景。 */
+#kbModal .kb-backdrop{background:rgba(28,24,35,.58)!important;backdrop-filter:none!important}
+#kbModal .kb-panel{background:#fffdf8!important;color:#302b36!important;opacity:1!important;backdrop-filter:none!important;border:1px solid #d5cfc3!important;box-shadow:0 20px 70px #17102040!important}
+#kbModal .kb-panel::before{display:none!important}
+#kbModal .kb-title{background:none!important;color:#30243e!important;-webkit-text-fill-color:#30243e!important;text-shadow:none!important}
+#kbModal .kb-body,#kbModal .kb-body p,#kbModal .kb-body li,#kbModal .kb-body td{color:#3b3542!important;opacity:1!important}
+#kbModal .kb-body h2,#kbModal .kb-body h3,#kbModal .kb-body strong{color:#2d2239!important}
+#kbModal .kb-cat,#kbModal .kb-close{background:#eee6f5!important;color:#583778!important;border-color:#d5c5e2!important}
+#kbModal .kb-close:hover{background:#dfd0ed!important;color:#30203f!important}
+#kbModal .kb-body code,#kbModal .kb-body blockquote{background:#f1ebf6!important;color:#49345f!important;border-color:#77598f!important}
+#kbModal .kb-body table.kb-table td,#kbModal .kb-body table.kb-table th{border:1px solid #d7d0de!important}
+#kbModal .kb-body table.kb-table tr:nth-child(odd) td,#kbModal .kb-body table.kb-table th{background:#eee8f3!important;color:#3b3542!important}
+#kbModal .kb-body table.kb-table tr:nth-child(even) td{background:#fffdf8!important}
+#kbModal .kb-foot{border-color:#d5cfc3!important}
+#kbModal .kb-prev,#kbModal .kb-next{color:#623e82!important;opacity:1!important}
+#kbModal .kb-prev:hover,#kbModal .kb-next:hover{background:#eee6f5!important;color:#412653!important}
+#kbModal .kb-count{color:#635a6b!important}
+#kbModal .kb-body{scrollbar-color:#80658f #eee8f3!important}
+#kbModal .kb-body::-webkit-scrollbar-thumb{background:#80658f!important}

@@ -1,0 +1,41 @@
+/* ============================================================
+   有朋迅 · 交互增强层（ypx-motion）
+   —— 非破坏性：仅添加「动作/微光」，不改变原站配色与版式。
+   全部规则挂在 html.ypx-motion 下；不支持/减弱动效时不启用，原样可见。
+   ============================================================ */
+
+/* ---------- 北斗光标（金墨微光，适配浅奶白底） ---------- */
+.ypx-dipper{position:fixed;inset:0;z-index:9999;pointer-events:none}
+.ypx-dipper .s{position:absolute;width:5px;height:5px;border-radius:50%;
+  background:#9a7b3a;box-shadow:0 0 6px rgba(160,125,62,.55);
+  transform:translate(-50%,-50%);will-change:transform}
+
+/* ---------- 滚动揭示（Reveal Hero） ---------- */
+html.ypx-motion [data-reveal]{opacity:0;transform:translateY(22px);
+  transition:opacity .85s cubic-bezier(.2,.7,.2,1),transform .85s cubic-bezier(.2,.7,.2,1)}
+html.ypx-motion [data-reveal].in{opacity:1;transform:none}
+
+/* ---------- 排盘结果「拨云见日」渐次铺开 ---------- */
+html.ypx-motion #unified-report > *{opacity:0;transform:translateY(18px) scale(.992);
+  transition:opacity .6s ease,transform .6s ease}
+html.ypx-motion #unified-report.ypx-in > *{opacity:1;transform:none}
+
+/* ---------- 五行能量条 · Neon Logic 微光 ---------- */
+html.ypx-motion .yc-wx i{box-shadow:0 0 8px currentColor}
+html.ypx-motion .yc-wx{transition:filter .3s}
+html.ypx-motion .yc-wx:hover{filter:brightness(1.08)}
+
+/* ---------- 紫微十二宫 · 悬停微光（非位移，仅辉光） ---------- */
+html.ypx-motion .pal{transition:box-shadow .3s ease,border-color .3s ease}
+html.ypx-motion .pal:hover{box-shadow:0 8px 26px rgba(111,90,166,.20)}
+
+/* ---------- 八字四柱卡 · 悬停微光 ---------- */
+html.ypx-motion .bz-p,html.ypx-motion .yc-yun{transition:box-shadow .3s ease,transform .3s ease}
+html.ypx-motion .bz-p:hover{box-shadow:0 8px 22px rgba(160,125,62,.16)}
+html.ypx-motion .yc-yun:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(160,125,62,.18)}
+
+/* ---------- 减弱动效：全部还原 ---------- */
+@media (prefers-reduced-motion: reduce){
+  html.ypx-motion [data-reveal],html.ypx-motion #unified-report > *{opacity:1!important;transform:none!important;transition:none!important}
+  .ypx-dipper{display:none!important}
+}

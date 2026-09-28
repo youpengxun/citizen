@@ -1,0 +1,214 @@
+/* ============================================================
+   有朋迅 · 赛博神算子 统一排盘层
+   —— 单输入驱动全体系，每流派独立视觉语言（配色遵循 赛博神算子规范）
+   ============================================================ */
+
+/* ---------- 隐藏旧的重复输入（消除"多个信息"） ---------- */
+#zw-form, #bz-form { display: none !important; }
+/* 紫微独立盘区（原由 #zw-form 提交才填充）在统一入口下不再单独展示 */
+#ziwei .zw-stage, #ziwei .zw-note { display: none !important; }
+/* 紫微/八字 展示区转为「说明 + 前往统一入口」的引导卡，避免空盘 */
+#zw-cta { max-width: 100%; }
+
+/* ---------- 主输入面板（浅奶白编辑风 · CTA 用少量紫） ---------- */
+.uf-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 14px 16px;
+  margin-top: 18px;
+}
+.uf-form .uf-row { display: flex; flex-direction: column; gap: 6px; }
+/* 公历/农历切换：[hidden] 必须覆盖 display:flex（否则两栏同时显示） */
+.uf-form .uf-row[hidden] { display: none !important; }
+/* 活跃的日期区占满剩余宽度 */
+#uf-solar-wrap, #uf-lunar-wrap { grid-column: 1 / -1; max-width: 420px; }
+.uf-form label { font-size: 12.5px; color: var(--ink-2); letter-spacing: .04em; }
+.uf-form select, .uf-form input {
+  font: inherit; font-size: 14px; color: var(--ink);
+  background: #fffdf8;
+  border: 1px solid var(--line-strong); border-radius: 12px;
+  padding: 10px 12px; outline: none; transition: border-color .25s, box-shadow .25s;
+}
+.uf-form select:focus, .uf-form input:focus {
+  border-color: var(--vio); box-shadow: 0 0 0 3px rgba(111,90,166,.18);
+}
+.uf-form .uf-full { grid-column: 1 / -1; }
+.uf-form .uf-submit {
+  grid-column: 1 / -1; justify-self: start;
+  display: inline-flex; align-items: center; gap: 8px;
+  background: linear-gradient(135deg, var(--vio), var(--vio-deep));
+  color: #fff; font-weight: 700; border: none; cursor: pointer;
+  padding: 13px 26px; border-radius: 999px; font-size: 15px;
+  box-shadow: 0 10px 26px rgba(111,90,166,.32);
+  transition: transform .2s, box-shadow .2s;
+}
+.uf-form .uf-submit:hover { transform: translateY(-2px); box-shadow: 0 14px 32px rgba(111,90,166,.42); }
+.uf-form .uf-hint { grid-column: 1 / -1; font-size: 12px; color: var(--ink-3); margin-top: -4px; }
+
+/* ---------- 统一报告容器（浅底 + 暖线） ---------- */
+.uf-report { margin-top: 34px; display: flex; flex-direction: column; gap: 22px; }
+/* 命主信息条：确认本地引擎已正确解析输入 */
+.uf-info {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 10px 14px; padding: 16px 18px; border-radius: 16px;
+  background: #fffdf8; border: 1px solid var(--line-strong);
+  box-shadow: 0 10px 30px rgba(33,28,21,.06);
+}
+.uf-info .info-cell { display: flex; flex-direction: column; gap: 3px; }
+.uf-info .info-cell .k { font-size: 11px; letter-spacing: .1em; color: var(--ink-3); }
+.uf-info .info-cell .v { font-size: 15px; font-weight: 600; color: var(--ink); font-family: var(--font-display, serif); }
+.uf-info .info-cell:first-child .v { color: var(--vio); }
+.uf-sys {
+  border-radius: 18px; overflow: hidden;
+  border: 1px solid var(--line-strong);
+  border-top: 3px solid var(--ac, var(--vio));   /* 每体系细顶线 = 唯一彩色标识 */
+  box-shadow: 0 14px 40px rgba(33,28,21,.07);
+  background: #fffdf8;                            /* 统一奶白卡面，去“彩虹沙拉” */
+}
+.uf-sys-head {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 18px; border-bottom: 1px solid var(--line);
+  background: linear-gradient(90deg, color-mix(in srgb, var(--ac) 9%, transparent), transparent);
+}
+.uf-sys-head .badge {
+  font-family: var(--font-en, Georgia, serif); font-size: 11px; letter-spacing: .14em;
+  padding: 4px 10px; border-radius: 999px; text-transform: uppercase;
+  background: var(--ac); color: #fff;
+}
+.uf-sys-head h3 { font-family: var(--font-display, serif); font-size: 19px; margin: 0; font-weight: 700; color: var(--ink); }
+.uf-sys-head .en { margin-left: auto; font-size: 11px; opacity: .5; letter-spacing: .14em; color: var(--ink-3); }
+.uf-sys-body { padding: 18px; }
+
+/* 通用：流式解读段落（约束行宽 = 可读） */
+.uf-prose { line-height: 1.85; font-size: 15px; color: var(--ink-2); max-width: 40em; }
+.uf-prose h2, .uf-prose h3 { margin: 14px 0 8px; color: var(--ink); font-family: var(--font-display, serif); }
+.uf-prose ul { margin: 8px 0; padding-left: 18px; }
+.uf-prose li { margin: 5px 0; }
+.uf-prose strong { color: var(--ink); }
+
+/* ============ ① 八字 · 暖金（仅顶线+徽章标识，卡面统一奶白） ============ */
+.sys-bazi { --ac:#a07d3e; --ac-deep:#7c5e26; --bg:#fffdf8; color: var(--ink); }
+.sys-bazi .bz-pillars { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 14px; }
+.sys-bazi .bz-p { background: rgba(160,125,62,.07); border: 1px solid rgba(160,125,62,.20); border-radius: 12px; padding: 12px; text-align: center; }
+.sys-bazi .bz-p .lab { font-size: 11px; opacity: .6; letter-spacing: .1em; color: var(--ink-3); }
+.sys-bazi .bz-p .gz { font-family: var(--font-display, serif); font-size: 26px; color: var(--ac-deep); margin: 4px 0; letter-spacing: .05em; }
+.sys-bazi .bz-p .el { font-size: 11px; opacity: .7; color: var(--ink-2); }
+
+/* ============ ② 紫微 · 紫（少量紫主场，唯一紫色体系卡） ============ */
+.sys-ziwei { --ac:#6f5aa6; --ac-deep:#4f3c82; --bg:#fffdf8; color: var(--ink); }
+.sys-ziwei .zw-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.sys-ziwei .pal {
+  background: rgba(111,90,166,.06); border: 1px solid rgba(111,90,166,.18); border-radius: 10px;
+  padding: 9px 10px; min-height: 92px; position: relative;
+}
+.sys-ziwei .pal.is-life { border-color: var(--ac); box-shadow: 0 0 14px rgba(111,90,166,.20); }
+.sys-ziwei .pal .pn { font-size: 12px; color: var(--ac-deep); font-weight: 700; }
+.sys-ziwei .pal .pb { font-size: 10px; opacity: .5; color: var(--ink-3); }
+.sys-ziwei .pal .stars { margin-top: 5px; display: flex; flex-wrap: wrap; gap: 3px; }
+.sys-ziwei .pal .star { font-size: 10.5px; padding: 1px 6px; border-radius: 999px; background: rgba(111,90,166,.10); color: var(--ac-deep); }
+.sys-ziwei .pal .star.mut-禄 { background: rgba(160,125,62,.18); color: #7c5e26; }
+.sys-ziwei .pal .star.mut-权 { background: rgba(184,92,140,.18); color: #8a3a6e; }
+.sys-ziwei .pal .star.mut-科 { background: rgba(95,138,118,.18); color: #3f6a57; }
+.sys-ziwei .pal .star.mut-忌 { background: rgba(120,120,120,.16); color: #555; }
+.sys-ziwei .mut-card { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.sys-ziwei .mut-card .m { font-size: 12px; padding: 5px 12px; border-radius: 999px; background: rgba(111,90,166,.10); border: 1px solid rgba(111,90,166,.28); color: var(--ac-deep); }
+
+/* ============ ③ 黄历建除 · 玉绿 ============ */
+.sys-almanac { --ac:#5f8a76; --ac-deep:#3f6a57; --bg:#fffdf8; color: var(--ink); }
+.sys-almanac .alm-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px,1fr)); gap: 10px; }
+.sys-almanac .alm-cell { background: rgba(95,138,118,.07); border: 1px solid rgba(95,138,118,.18); border-radius: 10px; padding: 10px 12px; }
+.sys-almanac .alm-cell .k { font-size: 11px; opacity: .6; color: var(--ink-3); }
+.sys-almanac .alm-cell .v { font-size: 15px; color: var(--ac-deep); margin-top: 3px; font-weight: 600; }
+.sys-almanac .jianchu { margin-top: 12px; padding: 12px; border-radius: 12px; background: rgba(160,125,62,.08); border: 1px solid rgba(160,125,62,.22); }
+.sys-almanac .jianchu b { color: #7c5e26; }
+
+/* ============ ④ 梅花易数 · 水墨 ============ */
+.sys-meihua { --ac:#5f7d8c; --ac-deep:#3f5d6b; --bg:#fffdf8; color: var(--ink); }
+.sys-meihua .hex { display: flex; gap: 26px; justify-content: center; margin: 14px 0; flex-wrap: wrap; }
+.sys-meihua .hex-col { text-align: center; }
+.sys-meihua .hex-col .ht { font-size: 12px; color: var(--ink-3); margin-bottom: 6px; letter-spacing: .1em; }
+.sys-meihua .gua { display: flex; flex-direction: column; gap: 5px; }
+.sys-meihua .yao { width: 56px; height: 9px; border-radius: 3px; background: #2a2a2a; }
+.sys-meihua .yao.yin { height: 9px; background: transparent; border-top: 4px solid #2a2a2a; border-bottom: 4px solid #2a2a2a; position: relative; }
+.sys-meihua .yao.yin::after { content: ""; position: absolute; left: 50%; top: -4px; width: 6px; height: 17px; background: var(--bg); }
+.sys-meihua .gn { font-family: var(--font-display, serif); font-size: 20px; margin-top: 7px; color: var(--ink); }
+
+/* ============ ⑤ 六爻 · 朱砂 ============ */
+.sys-liuyao { --ac:#a85c43; --ac-deep:#7e3f2c; --bg:#fffdf8; color: var(--ink); }
+.sys-liuyao .ly-lines { display: flex; flex-direction: column-reverse; gap: 7px; max-width: 320px; margin: 12px auto; }
+.sys-liuyao .ly { display: flex; align-items: center; gap: 12px; }
+.sys-liuyao .ly .num { width: 18px; text-align: center; color: var(--ac-deep); font-size: 12px; }
+.sys-liuyao .ly .bars { display: flex; gap: 6px; flex: 1; }
+.sys-liuyao .ly .bar { height: 14px; flex: 1; background: linear-gradient(180deg, #c9a877, #a8854f); border-radius: 3px; }
+.sys-liuyao .ly .bar.broken { background: transparent; border-top: 7px solid #a8854f; border-bottom: 7px solid #a8854f; position: relative; }
+.sys-liuyao .ly .bar.broken::after { content: ""; position: absolute; left: 50%; top: -7px; width: 8px; height: 21px; background: var(--bg); }
+.sys-liuyao .ly.dyn .bars .bar { box-shadow: 0 0 0 2px var(--ac); }
+.sys-liuyao .ly .gz { font-size: 12px; color: #3f6a57; min-width: 52px; }
+
+/* ============ ⑥ 塔罗 · 浅梅紫（与紫微区分：更浅，作次要点缀） ============ */
+.sys-tarot { --ac:#9b7fb0; --ac-deep:#6f5688; --bg:#fffdf8; color: var(--ink); }
+.sys-tarot .cards { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+.sys-tarot .tcard { width: 120px; border-radius: 12px; background: #fffdf8; border: 1px solid rgba(155,127,176,.45); padding: 12px 10px; text-align: center; box-shadow: 0 8px 22px rgba(34,29,21,.08); }
+.sys-tarot .tcard .pos { font-size: 11px; color: var(--ac-deep); letter-spacing: .1em; }
+.sys-tarot .tcard .nm { font-family: var(--font-display, serif); font-size: 15px; margin: 8px 0 4px; color: var(--ink); }
+.sys-tarot .tcard .en { font-size: 10px; opacity: .55; color: var(--ink-3); }
+.sys-tarot .tcard .rv { font-size: 11px; color: #b05a48; margin-top: 6px; }
+.sys-tarot .tcard.rev { opacity: .82; }
+.sys-tarot .tcard.rev .nm::after { content: " ⟲"; color: #b05a48; }
+
+/* ============ ⑦ 九宫飞星 · 青铜 ============ */
+.sys-flying { --ac:#5e8b83; --ac-deep:#3f6660; --bg:#fffdf8; color: var(--ink); }
+.sys-flying .luoshu { display: grid; grid-template-columns: repeat(3, 64px); grid-template-rows: repeat(3, 64px); gap: 8px; margin: 14px auto; }
+.sys-flying .cell { display: grid; place-items: center; border-radius: 10px; border: 1px solid rgba(94,139,131,.25); background: rgba(94,139,131,.06); font-size: 22px; color: var(--ac-deep); font-weight: 700; }
+.sys-flying .cell.center { border-color: var(--ac); color: var(--ac-deep); box-shadow: 0 0 14px rgba(94,139,131,.20); }
+.sys-flying .cell.ausp { background: rgba(95,138,118,.14); border-color: var(--ac); }
+.sys-flying .cell.inausp { background: rgba(168,92,67,.12); border-color: #a85c43; color: #7e3f2c; }
+
+/* ---------- 空/错误态 ---------- */
+.uf-empty { color: var(--ink-3); font-size: 14px; padding: 10px 2px; }
+.uf-err { color: #ff9c9c; font-size: 13px; }
+
+/* ---------- 其他命理体系折叠 ---------- */
+.uf-extra-wrap { margin-top: 4px; }
+.uf-toggle-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  font: inherit; font-size: 13.5px; font-weight: 600; cursor: pointer;
+  color: var(--vio); background: rgba(111,90,166,.08);
+  border: 1px solid rgba(111,90,166,.35); border-radius: 999px;
+  padding: 9px 16px; transition: background .2s, box-shadow .2s;
+}
+.uf-toggle-btn::before { content: "▸"; font-size: 10px; transition: transform .2s; }
+.uf-toggle-btn.open::before { transform: rotate(90deg); }
+.uf-toggle-btn:hover { background: rgba(111,90,166,.16); box-shadow: 0 6px 16px rgba(111,90,166,.18); }
+.uf-extra { margin-top: 18px; display: flex; flex-direction: column; gap: 22px; }
+
+@media (max-width: 720px) {
+  .sys-bazi .bz-pillars { grid-template-columns: repeat(2, 1fr); }
+  .sys-ziwei .zw-grid { grid-template-columns: repeat(3, 1fr); }
+  .uf-form { grid-template-columns: 1fr 1fr; }
+}
+
+/* 命盘阅读层：沿用原站布局，展开解释不遮挡表格。 */
+.bz-reading-basis,.bz-reading-guide,.bz-reading-report{margin:16px 0;border:1px solid rgba(128,128,128,.25);border-radius:12px;padding:16px 20px;min-width:0;overflow-wrap:anywhere}
+.bz-reading-basis p,.bz-reading-note{font-size:13px;line-height:1.8;opacity:.85;margin:8px 0}
+.bz-reading-guide summary,.bz-reading-report summary{cursor:pointer;font-weight:700;line-height:1.7;padding:4px 0}
+.bz-reading-guide summary:focus-visible,.bz-reading-report summary:focus-visible{outline:2px solid currentColor;outline-offset:4px}
+.bz-reading-guide dl{display:grid;grid-template-columns:110px minmax(0,1fr);gap:14px;margin:20px 0 4px;font-size:14px;line-height:1.85}
+.bz-reading-guide dt{font-weight:700}.bz-reading-guide dd{margin:0}
+@media(max-width:600px){.bz-reading-guide dl{grid-template-columns:1fr;gap:6px}.bz-reading-guide dd{margin-bottom:12px}.bz-reading-basis,.bz-reading-guide,.bz-reading-report{padding:14px}}
+
+/* 按用户提供的问真截图组织原站结果；手机端参考栏下移。 */
+.bz-result-nav{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 20px}.bz-result-nav a{padding:8px 15px;border:1px solid #b8aa8b;border-radius:20px;color:inherit;text-decoration:none;font-size:13px}
+.bz-result-layout{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(250px,1fr);gap:20px;align-items:start}.bz-result-main,.bz-result-reference{min-width:0;scroll-margin-top:110px}.bz-result-reference{border:1px solid #c8bea8;border-radius:14px;padding:20px}.bz-result-reference>p,.bz-relations>p{font-size:13px;line-height:1.8;opacity:.85}.bz-result-reference .bz-reading-guide{padding:12px}.bz-result-reference .bz-reading-guide dl{grid-template-columns:1fr;gap:6px}.bz-result-reference .bz-reading-guide dd{margin-bottom:10px}
+.bz-relations{margin:22px 0;padding:20px;border:1px solid #c8bea8;border-radius:14px;scroll-margin-top:110px}.bz-relations ul{list-style:none;margin:16px 0 0;padding:0}.bz-relations li{display:flex;justify-content:space-between;align-items:center;gap:15px;max-width:550px;margin:10px auto;padding:10px 0;border-bottom:1px solid #c8bea8}.bz-relations li b{font-size:13px;font-weight:500}.bz-result-nav a:focus-visible{outline:2px solid currentColor;outline-offset:3px}
+@media(max-width:1050px){.bz-result-layout{grid-template-columns:1fr}.bz-result-reference{position:static}}
+
+.ypx-local-tools input,.ypx-local-tools textarea,.ypx-pair-form input,.ypx-learning-search input{width:100%;padding:12px;border:1px solid #c9bfce;border-radius:10px;background:#fffdf8;color:#302b36;font:inherit;margin:8px 0}.ypx-local-tools textarea{min-height:85px}.ypx-case-entry{border-top:1px solid #d6ccdc;padding:18px 0}.ypx-case-entry button,.ypx-local-actions button{margin:5px}.ypx-pair-form{display:grid;grid-template-columns:1fr 1fr;gap:16px}.ypx-pair-form fieldset{min-width:0;border:1px solid #d6ccdc;border-radius:12px}.ypx-pair-table{width:100%;border-collapse:collapse;margin:20px 0}.ypx-pair-table td,.ypx-pair-table th{padding:12px;border:1px solid #d6ccdc;text-align:center}.ypx-learning-search{margin-bottom:22px}.ypx-learning-search>div{max-height:240px;overflow:auto;display:flex;flex-wrap:wrap;gap:8px}.ypx-snapshot{max-height:300px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere}.ypx-local-message{color:#553978}.ypx-local-tools p{line-height:1.8}@media(max-width:650px){.ypx-pair-form{grid-template-columns:1fr}}
+.ypx-learning-paths{margin:24px 0;padding:22px;border:1px solid #d6ccdc;border-radius:16px}.ypx-path-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.ypx-path-grid article{padding:16px;border:1px solid #d6ccdc;border-radius:12px;min-width:0}.ypx-learning-paths button{margin:5px;white-space:normal;text-align:left}.ypx-learning-paths details{margin:15px 0}.ypx-learning-paths summary{cursor:pointer;font-weight:600}.ypx-article-actions{display:flex;flex-wrap:wrap;gap:10px;margin:8px 0}.ypx-article-actions button{color:#573777!important;border:1px solid #cdbbda!important;background:#f1eaf7!important}@media(max-width:760px){.ypx-path-grid{grid-template-columns:1fr}}
+.ypx-transits{margin-top:24px;padding:24px;border:1px solid #d8cce3;border-radius:18px;background:#fffdf8;color:#302637}.ypx-transits label{display:block;margin:16px 0}.ypx-transits input{display:block;max-width:100%;padding:10px;color:#302637;background:#fff;border:1px solid #a995bb;border-radius:8px}.ypx-transits h4{line-height:1.8;overflow-wrap:anywhere}.ypx-transits p,.ypx-transits li{color:#493b51;line-height:1.8}.ypx-transits .btn{margin:4px}
+.ypx-transits details{margin:20px 0}.ypx-transits details>.btn{display:block;width:100%;text-align:left;white-space:normal;line-height:1.7}.ypx-transits textarea{box-sizing:border-box;width:100%;max-width:100%;padding:12px;background:#fff;color:#302637;border:1px solid #a995bb;border-radius:8px;font:inherit}.ypx-transits button:disabled{opacity:.55;cursor:not-allowed}
+.ypx-detailed-reading{margin:24px 0;padding:20px;border:1px solid #d8cce3;border-radius:16px;background:#fffdf8;color:#302637}.ypx-detailed-reading h4{margin-top:24px;line-height:1.6}.ypx-detailed-reading p{line-height:1.9;color:#493b51}.ypx-detailed-reading td,.ypx-detailed-reading th{padding:10px;min-width:76px;vertical-align:top;white-space:normal}
+.ypx-action-plan{padding:20px;margin:24px 0;border:1px solid #cfc0dd;border-radius:16px;background:#fffdf8;color:#302637}.ypx-action-plan p{color:#493b51;line-height:1.9}.ypx-action-plan select,.ypx-action-plan textarea{box-sizing:border-box;max-width:100%;padding:10px;background:#fff;color:#302637;border:1px solid #a995bb;border-radius:8px;font:inherit}.ypx-action-plan textarea{display:block;width:100%;margin:12px 0}.ypx-action-plan article{padding:14px;margin-top:12px;border:1px solid #ddd0e7;border-radius:10px}.ypx-action-plan h4{margin-top:18px}
+/* Numbered monthly reading; retains cream and violet palette. */
+.ypx-focus{margin:24px 0;color:#302637}.mf-nav{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}.mf-nav button{padding:10px 14px;background:#eee7f5;color:#49335f;border:1px solid #baacc9;border-radius:999px;cursor:pointer;font:inherit}.mf-card{background:#fffdf8;border:1px solid #d8cce3;border-radius:16px;padding:22px;margin:16px 0;scroll-margin-top:110px}.mf-primary{border-left:5px solid #70508e;background:#f8f4fc}.mf-card-head{display:flex;gap:12px;align-items:center;margin-bottom:12px}.mf-card-head h4{margin:0!important;font-size:1.1rem}.mf-badge{display:inline-block;padding:4px 9px;border-radius:6px;background:#eee5f4;color:#54356d;font-size:13px;font-weight:700;white-space:nowrap}.ypx-focus .mf-lead{font-size:1.2rem;font-weight:700;color:#302637;line-height:1.7;max-width:42em}.mf-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.mf-stats>div{background:#f3eef7;padding:14px;border-radius:10px;text-align:center}.mf-stats span,.mf-stats strong{display:block}.mf-stats strong{font-size:1.6rem;color:#54356d;margin-top:6px}.mf-range{display:grid;gap:6px;font-size:.9rem;border-top:1px solid #dfd3e7;padding-top:14px;margin-top:16px}.mf-range strong{font-weight:500;color:#493b51}.mf-fields{display:grid;grid-template-columns:1fr 1fr;gap:14px}.mf-fields label{font-size:.9rem}.mf-fields select,.ypx-focus textarea{display:block;width:100%;box-sizing:border-box;margin-top:7px;padding:12px;color:#302637;background:white;border:1px solid #a995bb;border-radius:8px;font:inherit}.mf-action-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.mf-action-grid .mf-card{margin:0;padding:16px}.mf-do{border-top:4px solid #42725b}.mf-avoid{border-top:4px solid #98632f}.mf-review{border-top:4px solid #70508e}.ypx-focus summary{cursor:pointer;font-weight:600;padding:10px 0}.ypx-focus p,.ypx-focus li{line-height:1.85;max-width:66ch}.ypx-focus button:focus-visible,.ypx-focus section:focus-visible{outline:3px solid #70508e;outline-offset:3px}@media(max-width:850px){.mf-action-grid{grid-template-columns:1fr}.mf-fields{grid-template-columns:1fr}.mf-card{padding:16px}.mf-nav button{font-size:14px}}@media(prefers-reduced-motion:reduce){.ypx-focus *{scroll-behavior:auto!important}}
+.mf-customer-start{margin-top:20px}.mf-explanation{margin-top:24px;border-top:1px solid #d8cce3;padding-top:12px}.mf-customer-start>.mf-fields{padding:20px;background:#f3eef7;border-radius:16px}.mf-customer-start select:focus-visible{outline:3px solid #70508e;outline-offset:2px}

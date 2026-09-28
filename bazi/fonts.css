@@ -1,0 +1,21 @@
+/* ============================================================
+   有朋迅 · 本地自托管字体（去 Google Fonts 依赖，国内可达）
+   字体均为 SIL OFL 开源字体，已子集化；许可见 fonts/OFL.txt。
+   CJK 按站点 + 命理语料子集；生僻字回退到设计字体栈里的系统 CJK 字体（不会出豆腐块）。
+   ============================================================ */
+
+/* —— Noto Serif SC（标题）—— */
+@font-face{font-family:'Noto Serif SC';font-style:normal;font-weight:500 600;font-display:swap;src:url('fonts/noto-serif-sc-600.woff2') format('woff2');}
+@font-face{font-family:'Noto Serif SC';font-style:normal;font-weight:700;font-display:swap;src:url('fonts/noto-serif-sc-700.woff2') format('woff2');}
+
+/* —— Noto Sans SC（正文）—— */
+@font-face{font-family:'Noto Sans SC';font-style:normal;font-weight:400;font-display:swap;src:url('fonts/noto-sans-sc-400.woff2') format('woff2');}
+@font-face{font-family:'Noto Sans SC';font-style:normal;font-weight:500;font-display:swap;src:url('fonts/noto-sans-sc-500.woff2') format('woff2');}
+@font-face{font-family:'Noto Sans SC';font-style:normal;font-weight:600 900;font-display:swap;src:url('fonts/noto-sans-sc-700.woff2') format('woff2');}
+
+/* —— Space Grotesk（英文/数字，可变字重）—— */
+@font-face{font-family:'Space Grotesk';font-style:normal;font-weight:400 600;font-display:swap;src:url('fonts/space-grotesk-var.woff2') format('woff2');}
+
+/* —— 创作者主页 index.html 用（拉丁，可变字重；命理平台页不会加载）—— */
+@font-face{font-family:'Bricolage Grotesque';font-style:normal;font-weight:500 800;font-display:swap;src:url('fonts/bricolage-grotesque-var.woff2') format('woff2');}
+@font-face{font-family:'Hanken Grotesk';font-style:normal;font-weight:400 700;font-display:swap;src:url('fonts/hanken-grotesk-var.woff2') format('woff2');}
