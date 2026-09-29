@@ -44,7 +44,7 @@ root.YPXFocus=function(host,a,r,K,previous){
  const change=el('details');change.className='mf-explanation';change.append(el('summary','与上一流月相比，具体变了什么？'));
  if(previous){const norm=x=>x.replace(/^流月. · /,'');const old=previous.relations.filter(x=>x.startsWith('流月')).map(norm),now=r.relations.filter(x=>x.startsWith('流月')).map(norm);const added=now.filter(x=>!old.includes(x)),removed=old.filter(x=>!now.includes(x));change.append(el('p',`上一流月 ${previous.month}（${previous.monthGod}） → 当前 ${r.month}（${r.monthGod}）。对照的是本流月交节前一秒，不是公历上个月的同一天。`),el('p','新增关系：'+(added.join('；')||'本轮六合、六冲、六害没有新增关系。')),el('p','不再出现的关系：'+(removed.join('；')||'本轮没有移除的关系。')),el('p',`本命四柱不变。流年${previous.year===r.year?'仍为'+r.year:previous.year+' → '+r.year}；大运${previous.run===r.run?'仍为'+r.run:previous.run+' → '+r.run}。关系变化不等于现实事件一定变化。`));}else change.append(el('p','上一流月超出可比较范围，或早于出生时间，暂不展示对照。'));box.append(change);
  const balance=el('details');balance.className='mf-explanation';balance.append(el('summary','既有合，也有冲，该怎么理解？'),el('p','它们可能来自不同柱位，也可能属于流年与流月两个层次，不能互相抵消后算出一个吉凶分数。先展开依据，核对每条关系连到哪里，再回到你正在处理的具体事情。'),el('p','合不等于对方同意，冲不等于必然争执。尚未综合旺衰、格局、用神与合化条件，因此这里不判断“这个月一定适合辞职、投资或确定关系”。'));box.append(balance);
- box.append(el('h3','这个月，你最想理清什么？'),el('p','不用先读懂命盘。选一件正在处理的事，我们从这里开始。'));
+
  const sections=[];
  const one=card('依据','为什么这样提示');one.append(badge('命盘依据'),el('p',f.main));
  const guide=f.main.includes('六冲')?'先核对已有变化，再商量怎么调整。':f.main.includes('六合')?'先把协作条件讲清楚，不把相合当作默契。':f.main.includes('六害')?'先核对沟通中的误解，不据此怀疑别人。':'先观察，不为这个月强行安排一个故事。';
@@ -52,13 +52,6 @@ root.YPXFocus=function(host,a,r,K,previous){
  const two=card('时间','这次解读覆盖的时间');const stats=el('div');stats.className='mf-stats';[['本命月柱',f.monthBase],['流年',r.year],['当前流月',r.month]].forEach(([t,v])=>{const x=el('div');x.append(el('span',t),el('strong',v));stats.append(x);});two.append(stats);
  const more=el('details');more.append(el('summary','展开重复天干与其他关系'),el('p',f.repetitions.length?'本月天干也出现在本命'+f.repetitions.join('、')+'。字面重复不等于力量翻倍。':'本月天干与本命天干没有同字重复。'));const list=el('ul');f.others.forEach(t=>list.append(el('li',t)));more.append(list,el('p','次要线索可以保留，不必每条都安排一个行动。'));two.append(more);
  const range=el('div');range.className='mf-range';range.append(el('span','本流月开始'),el('strong',r.start),el('span','下一流月开始（本段不含）'),el('strong',r.end));two.append(range);
- const three=el('section');three.className='mf-customer-start';
- const placeholder=el('option','请选择你关心的事');placeholder.value='';select.append(placeholder);Object.keys(routes).forEach(v=>{const o=el('option',v);o.value=v;select.append(o);});select.value='';select.setAttribute('aria-label','本月最关注的事情');situation.setAttribute('aria-label','当前进展');
- const fields=el('div');fields.className='mf-fields';[['这件事与什么有关？',select]].forEach(([t,input])=>{const l=el('label',t);l.append(input);fields.append(l);});
- context.rows=3;context.maxLength=1000;context.setAttribute('aria-label','我的近况');context.placeholder='可选：写一件最近想解决的事，仅在本次页面对照，不会保存。';const contextBox=el('details');contextBox.append(el('summary','补充我的近况（可选）'),context,el('p','写下来，方便你对照自己的处境。这段文字不会保存，也不会自动影响下面的建议。'));
- function options(){render();}
- function render(){result.replaceChildren();if(!select.value){result.append(el('p','先选择领域，再填写正在考虑的两个方案。'));return;}root.YPXDecision?.mount(result,{domain:select.value,basis:`所选流月${r.month}，大运${r.run}；${f.main}。这些是命盘关系，不是现实条件的证明。`});}
- select.addEventListener('change',options);situation.addEventListener('change',render);three.append(fields,result);
- const explanation=el('details');explanation.className='mf-explanation';explanation.append(el('summary','为什么这样解读？查看命盘与时间依据'),el('p','命盘提供传统文化的观察角度；上面的行动来自你选择的现实场景，不表示这个月一定发生相应事件。'),one,two);box.append(three,explanation);host.append(box);options();
+ const explanation=el('details');explanation.className='mf-explanation';explanation.append(el('summary','为什么这样解读？查看命盘与时间依据'),el('p','以下列出本命与当前流月的对应关系及时间范围，供你核对解读依据。'),one,two);box.append(explanation);host.append(box);
 };
 })(typeof globalThis!=='undefined'?globalThis:this);
