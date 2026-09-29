@@ -286,7 +286,7 @@
 
         report.innerHTML=html;
         window.YPXZiwei?.mount(document.getElementById('zwf-result'),z);
-        window.dispatchEvent(new CustomEvent('ypx:chart-ready',{detail:{name:$("#uf-name").value,analysis:a,input:{date:date.getFullYear()+"-"+pad(date.getMonth()+1)+"-"+pad(date.getDate()),time:pad(hh)+":"+pad(mm),gender:gender,calendar:calV,options:opts,engine:"original+NOAA+lunar-javascript1.7.5-yun2"}}}));
+        window.dispatchEvent(new CustomEvent('ypx:chart-ready',{detail:{ziwei:z,name:$("#uf-name").value,analysis:a,input:{date:date.getFullYear()+"-"+pad(date.getMonth()+1)+"-"+pad(date.getDate()),time:pad(hh)+":"+pad(mm),gender:gender,calendar:calV,options:opts,engine:"original+NOAA+lunar-javascript1.7.5-yun2"}}}));
         report.scrollIntoView({behavior:"smooth", block:"start"});
       } catch(err){
         console.error(err);
