@@ -1,0 +1,38 @@
+name: Sync YouTube videos
+on:
+  schedule:
+    - cron: '23 * * * *'
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/youtube-sync.yml'
+      - 'scripts/sync_youtube.py'
+permissions:
+  contents: write
+  pages: write
+concurrency:
+  group: youtube-sync
+  cancel-in-progress: false
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Read and validate channel feed
+        run: python scripts/sync_youtube.py
+      - name: Publish changed data
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ -z "$(git status --porcelain -- data/youtube.json)" ]; then exit 0; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add data/youtube.json
+          git commit -m 'Refresh public YouTube videos'
+          git pull --rebase origin main
+          git push origin HEAD:main
+          gh api --method POST "repos/$GITHUB_REPOSITORY/pages/builds"
