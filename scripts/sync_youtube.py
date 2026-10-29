@@ -8,7 +8,7 @@ NS = {'a':'http://www.w3.org/2005/Atom','yt':'http://www.youtube.com/xml/schemas
 def parse(raw):
     root=ET.fromstring(raw)
     if root.findtext('yt:channelId',namespaces=NS)!=CHANNEL:
-        raise ValueError('Unexpected channel')
+        raise ValueError('Unexpected channel: '+repr(root.findtext('yt:channelId',namespaces=NS))+' feed id: '+repr(root.findtext('a:id',namespaces=NS)))
     videos=[]
     for entry in root.findall('a:entry',NS):
         vid=entry.findtext('yt:videoId',namespaces=NS)
@@ -41,3 +41,4 @@ def main():
     temp=TARGET.with_suffix('.tmp');temp.write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n',encoding='utf-8');os.replace(temp,TARGET)
     print('Validated',len(videos),'videos')
 if __name__=='__main__':main()
+
