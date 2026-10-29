@@ -7,7 +7,7 @@ TARGET = Path(__file__).resolve().parents[1] / 'data/youtube.json'
 NS = {'a':'http://www.w3.org/2005/Atom','yt':'http://www.youtube.com/xml/schemas/2015'}
 def parse(raw):
     root=ET.fromstring(raw)
-    if root.findtext('yt:channelId',namespaces=NS)!=CHANNEL:
+    if root.findtext('yt:channelId',namespaces=NS) not in (CHANNEL, CHANNEL[2:]):
         raise ValueError('Unexpected channel: '+repr(root.findtext('yt:channelId',namespaces=NS))+' feed id: '+repr(root.findtext('a:id',namespaces=NS)))
     videos=[]
     for entry in root.findall('a:entry',NS):
