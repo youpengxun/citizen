@@ -242,6 +242,18 @@ if(isCatalog){host.insertBefore(showcase,document.querySelector('label[for="sear
 const images=host.querySelectorAll('.grid article>img.work-art,.project-case-card>img.work-art');
 // Catalogue images open a larger view; linked homepage cards keep their navigation.
 const dialog=document.createElement('dialog');dialog.className='work-lightbox';dialog.setAttribute('aria-label','作品图片预览');const close=document.createElement('button');close.textContent='关闭 ×';close.setAttribute('aria-label','关闭图片预览');const pic=document.createElement('img');pic.alt='作品图片大图';dialog.append(close,pic);document.body.append(dialog);close.onclick=()=>dialog.close();dialog.onclick=e=>{if(e.target===dialog)dialog.close();};
-if(isCatalog)images.forEach(img=>{const btn=document.createElement('button');btn.className='work-zoom';btn.setAttribute('aria-label','放大查看 '+img.parentElement.querySelector('h2').textContent);img.replaceWith(btn);btn.append(img);btn.onclick=()=>{pic.src=img.src;pic.alt=btn.getAttribute('aria-label');dialog.showModal();};});
+if(isCatalog)host.querySelectorAll('.grid article').forEach(card=>{
+ const art=card.querySelector(':scope > .work-art'),target=card.querySelector('h2 a');if(!art||!target)return;
+ const link=document.createElement('a');link.className='work-zoom work-cover-link';link.href=target.href;link.setAttribute('aria-label','查看作品：'+target.textContent);art.replaceWith(link);link.append(art);
+ if(art.tagName==='IMG'){const btn=document.createElement('button');btn.type='button';btn.className='work-enlarge';btn.textContent='放大封面';btn.setAttribute('aria-label','放大封面：'+target.textContent);card.querySelector('.copy').append(btn);btn.onclick=()=>{pic.src=art.src;pic.alt=target.textContent;dialog.showModal();};}
+});
+const compactStyle=document.createElement('style');compactStyle.textContent='.visual-works .work-cover-link{cursor:pointer;text-decoration:none}.work-enlarge{margin:12px 8px 0 0;padding:10px 16px;min-height:44px;border:1px solid #82947f;border-radius:24px;background:transparent;color:inherit;cursor:zoom-in}.home-more{margin:24px 0;border-top:1px solid #bcc6ae;border-bottom:1px solid #bcc6ae;padding:18px 0}.home-more>summary{cursor:pointer;font-size:18px;min-height:44px;line-height:44px}.home-more[open]>summary{margin-bottom:24px}';document.head.append(compactStyle);
+if(!isCatalog){
+ const fold=(nodes,title)=>{if(!nodes.length)return;const details=document.createElement('details');details.className='home-more';const summary=document.createElement('summary');summary.textContent=title;details.append(summary);nodes[0].before(details);nodes.forEach(n=>details.append(n));};
+ fold([...host.children].filter(n=>n!==showcase&&!n.querySelector('a[href="works.html"]')),'展开更多项目实践');
+ const remaining=[];for(let n=host.nextElementSibling;n;n=n.nextElementSibling)remaining.push(n);fold(remaining,'展开影片系列、研究与创作过程');
+ const openHash=()=>{const target=document.getElementById(decodeURIComponent(location.hash.slice(1)));if(!target)return;for(let n=target.parentElement;n;n=n.parentElement)if(n.tagName==='DETAILS')n.open=true;requestAnimationFrame(()=>target.scrollIntoView());};window.addEventListener('hashchange',openHash);if(location.hash)openHash();
+}
+
 if(!matchMedia('(prefers-reduced-motion: reduce)').matches&&'IntersectionObserver'in window){const observer=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('is-in');observer.unobserve(e.target);}}),{threshold:.06});host.querySelectorAll('.featured-work,.grid article,.project-case-card').forEach(el=>{el.classList.add('work-reveal');observer.observe(el);});}
 })();
